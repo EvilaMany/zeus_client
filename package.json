@@ -1,0 +1,39 @@
+{
+    "name": "Bitcer.com",
+    "version": "0.1.0",
+    "main": "main.js",
+    "scripts": {
+        "start": "electron .",
+        "pack": "electron-builder --dir",
+        "dist": "electron-builder"
+    },
+    "devDependencies": {
+        "electron": "^6.0.4",
+        "electron-packager": "^14.0.4",
+        "electron-builder": "^21.2.0"
+    },
+    "build": {
+        "appId": "MyApp",
+        "mac": {
+            "category": "your.app.category.type"
+        }
+    },
+    "author": "some men",
+    "description": "lol",
+    "dependencies": {
+        "axios": "^0.19.0",
+        "bootstrap": "^4.3.1",
+        "bootstrap4": "0.0.1-security",
+        "cryptojslib": "^3.1.2",
+        "electron-notifications": "^1.0.0",
+        "electron-notify": "^0.1.0",
+        "font-awesome": "^4.7.0",
+        "getmac": "^1.4.6",
+        "jquery": "^3.4.1",
+        "node-notifier": "^5.4.3",
+        "vue": "^2.6.10"
+    },
+    "extraResources": [
+        "resource/*"
+    ]
+}
