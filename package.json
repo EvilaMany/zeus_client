@@ -1,7 +1,43 @@
 {
-    "name": "Bitcer.com",
+    "name": "Zeus",
     "version": "0.1.0",
     "main": "main.js",
+
+    "build": {
+        "appId": "com.zeus.quickstart",
+        "extraFiles": ["**/*", "config.json"],
+
+        "files": [
+            "node_modules/**/*",
+            "config.json"
+        ],
+        "directories": {
+            "buildResources": "resources"
+        },
+        "extraFiles": [
+            "js/controls.js",
+            "local"
+        ],
+        "extraResources": [
+            "resources"
+        ],
+        "win": {
+            "target": [{
+                "target": "msi",
+                "arch": [
+                    "x64",
+                    "ia32"
+                ]
+            }],
+            "extraFiles": ["**/*", "config.json"],
+            "extraResources": [
+                "**/*"
+            ]
+        }
+    },
+
+    "icon": "./resources/img/logo64.png",
+    "appId": "zeus",
     "scripts": {
         "start": "electron .",
         "pack": "electron-builder --dir",
@@ -15,7 +51,7 @@
     "build": {
         "appId": "MyApp",
         "mac": {
-            "category": "your.app.category.type"
+            "category": "forex"
         }
     },
     "author": "some men",
@@ -31,6 +67,7 @@
         "getmac": "^1.4.6",
         "jquery": "^3.4.1",
         "node-notifier": "^5.4.3",
+        "roboto-fontface": "^0.10.0",
         "vue": "^2.6.10"
     },
     "extraResources": [

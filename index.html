@@ -2,13 +2,14 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Hello World!</title>
+    <title>Zeus</title>
 
     <style>
         @keyframes logo {
             0% {
                 opacity: 0;
                 transform: rotate(0deg);
+                -
             }
 
             50% {
@@ -37,6 +38,17 @@
             height: 100vh;
             position: fixed;
         }
+
+        .text-test {
+            position: absolute;
+            display: inline;
+            color: rgba(255, 255, 255, 0);
+            background-color: rgba(1, 1, 1, 0);
+            max-width: 230px;
+            font-family: "Calibri", sans-serif;
+            font-size: 15px;
+            line-height: 15px;
+        }
     </style>
 
     <script src="node_modules/cryptojslib/rollups/aes.js"></script>
@@ -44,44 +56,103 @@
     <link rel="stylesheet" type="text/css" href="./node_modules/bootstrap/dist/css/bootstrap.min.css">
     <link href="./resources/fonts/font-awesome/css/all.min.css" rel="stylesheet" type="text/css">
     <link rel="stylesheet" type="text/css" href="./style.css">
-    <script type="text/javascript" src="https://cdn.rawgit.com/asvd/dragscroll/master/dragscroll.js"></script>
-
-
+    <link rel="stylesheet" type="text/css" href="node_modules/roboto-fontface/css/roboto/roboto-fontface.css">
+    <script type="text/javascript" src="node_modules/dragscroll/dragscroll.js"></script>
 </head>
 
 <body>
+
+
+    <span class="text-test"></span>
     <div class="preloader">
         <img src="resources/img/logo.png" class="logo w-25">
     </div>
 
 
-
+    <nav class="nav">
+        <div class="buttons-control ml-auto">
+            <button class="btn text-info btn-minimize"><i class="fal fa-window-minimize"></i></button>
+            <button class="btn text-danger btn-close"><i class="fal fa-times"></i></button>
+        </div>
+    </nav>
     <div class="wrapper" id="app" style="display: none">
-        <nav class="nav">
-            <div class="buttons-control ml-auto">
+
+
+
+
+
+        <nav class="nav" >
+            <div class="buttons-control ml-auto" v-on:mouseout="showGlobal = false">
                 <button class="btn text-info btn-minimize"><i class="fal fa-window-minimize"></i></button>
-                <button class="btn text-danger btn-close"><i class="fal fa-times"></i></button>
+                <button class="btn text-danger btn-close"><i class="fal fa-times" ></i></button>
             </div>
         </nav>
 
         <div class="signals" v-if="accessToken">
 
             <div class="pt-4"> </div>
+
+
+            <!--<div class="open-global"></div>-->
+            <div class="global" :class='{"globalOpen": this.showGlobal}' >
+                <h4 class="title">{{ l.select_currencies_for_showing }}</h4>
+                <div class="slider">
+                    <div class="pair" v-for="signals, currency in this.signals" v-bind:class='{"hidden": hiddenSignals[currency] == 1}' v-bind:id="'global_' + currency" v-on:click.prevent="changeHidden(currency)">
+                        <div>
+                            <span class="curr">{{ currency }}</span>
+                            <!--
+                            <span v-if="getCurrencyWithSignal(currency).conclusion == 1" class="presignal text-success">
+                                {{ secondsToStr(getCurrencyWithSignal(currency).time) }} <i class="fas fa-caret-up"></i>
+                            </span>
+                            <span v-else-if="getCurrencyWithSignal(currency).conclusion == -1" class="presignal text-danger">
+                                {{ secondsToStr(getCurrencyWithSignal(currency).time) }} <i class="fas fa-caret-down"></i>
+                            </span>
+                            <!--
+                            <span class="status">
+                                <i v-if="hiddenSignals[currency] != 1"></i>
+                                <i v-else class="fa fa-eye-slash"></i>
+                            </span>-->
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+
             <div class="pair-slider">
                 <div class="left disabled"><i class="fal fa-chevron-left"></i></div>
-                <div class="slider dragscroll">
-                    <div class="pair" v-for="signals, currency in this.signals" v-bind:class='{"active": activeCurrency == currency}' v-bind:id="currency" v-on:click.prevent="setCurrency(currency)">
+                <div class="slider dragscroll slider-main">
+                    <div class="pair" v-for="signals, currency in this.signals" v-bind:class='{"active": activeCurrency == currency, "hidden": hiddenSignals[currency] == 1}' v-bind:id="currency" v-on:click.prevent="setCurrency(currency)">
                         <div>
                             <span class="curr">{{ currency }}</span>
                             <span v-if="getCurrencyWithSignal(currency).conclusion == 1" class="presignal text-success">
-                                {{ secondsToStr(getCurrencyWithSignal(currency).time) }} <i class="fa fa-chevron-up"></i>
+                                {{ secondsToStr(getCurrencyWithSignal(currency).time) }} <i class="fas fa-caret-up"></i>
                             </span>
                             <span v-else-if="getCurrencyWithSignal(currency).conclusion == -1" class="presignal text-danger">
-                                {{ secondsToStr(getCurrencyWithSignal(currency).time) }} <i class="fa fa-chevron-down"></i>
+                                {{ secondsToStr(getCurrencyWithSignal(currency).time) }} <i class="fas fa-caret-down"></i>
                             </span>
                         </div>
                     </div>
                 </div>
+                <!--
+                <div class="selector">
+                    <div class="show">
+                        <i class="fa fa-chevron-down"></i>
+                    </div>
+                    <div class="pairs">
+                        <div class="pair">
+                            <div></div>
+                            <div class="name">USD/CAD</div>
+                            <div class="show"><i class="fas fa-eye"></i></div>
+                        </div>
+                        <div class="pair">
+                            <div></div>
+                            <div class="name">USD/CAD</div>
+                            <div class="show"><i class="fas fa-eye"></i></div>
+                        </div>
+                    </div>
+                </div>
+            -->
                 <div class="right"><i class="fal fa-chevron-right"></i></div>
             </div>
 
@@ -97,62 +168,175 @@
             <div class="inds contain" v-if="activeSignal != null">
                 <div class="d-flex flex-row justify-content-between">
                     <div class="ind ind1">
-                        <div class="title text-uppercase">{{ l.technical_analysis }}
-                            <i v-if="activeSignal.technical_analisis == 1" class="fa fa-chevron-up text-success"></i>
-                            <i v-else-if="activeSignal.technical_analisis == -1" class="fa fa-chevron-down text-danger"></i>
+                        <div class="title">{{ l.technical_analysis }}
+                            <i v-if="activeSignal.technical_analisis == 1" class="fa fa-caret-up text-success"></i>
+                            <i v-else-if="activeSignal.technical_analisis == -1" class="fa fa-caret-down text-danger"></i>
                         </div>
-                        <div v-if="activeSignal.technical_analisis == 1" class="mt-3 value label label-success text-capitalize">
+                        <div v-if="activeSignal.technical_analisis == 1" class="mt-1  label-outline-success value    ucfirst">
+
                             {{ l.active_buy }}
-                            <i class="fa fa-chevron-up"></i>
+                            <i class="fa fa-caret-up text-success"></i>
                         </div>
-                        <div v-else-if="activeSignal.technical_analisis == -1" class="mt-3 value label label-danger text-capitalize">
+                        <div v-else-if="activeSignal.technical_analisis == -1" class="mt-1 value  label-outline-danger  ucfirst">
                             {{ l.active_sell }}
-                            <i class="fa fa-chevron-down"></i>
+                            <i class="fa fa-caret-down text-danger"></i>
                         </div>
-                        <div v-else class="value label label-muted mt-3 text-capitalize">{{ l.neutrally }}</div>
+                        <div v-else class="value  label-outline-neutrally  mt-1 ucfirst">{{ l.neutrally }}</div>
+
                     </div>
                     <div class="ind ind2">
-                        <div class="title">{{ l.moving_averages }} <i class="fa fa-chevron-up text-success"></i></div>
-                        <div class="d-flex flex-row justify-content-around">
-                            <span class="text text-success line-title">{{ activeSignal.moving_averages_buy }} <span class="subtitle">{{ l.buy_up }}</span></span>
-                            <span class="text text-danger line-title">{{ activeSignal.moving_averages_sell }} <span class="subtitle">{{ l.sell_up }}</span></span>
+                        <div class="title">
+                            {{ l.moving_averages }}
+                            <i v-if="activeSignal.moving_averages_buy > activeSignal.moving_averages_sell" class="fa fa-caret-up text-success"></i>
+                            <i v-else-if="activeSignal.moving_averages_buy < activeSignal.moving_averages_sell" class="fa fa-caret-down text-danger"></i>
                         </div>
-                        <div class="d-flex flex-row justify-content-center">
-                            <div class="line-chart-green" :style='{width: activeSignal.moving_averages_buy / (activeSignal.moving_averages_buy + activeSignal.moving_averages_sell) *100  + "%"}'></div>
+                        <div class="d-flex flex-row justify-content-around">
+                            <div class="position-relative">
+                                <i style="position: absolute; top: 30%; left: -13;" class="text-success fa fa-caret-up"></i>
+                                <span class="text line-title">{{ activeSignal.moving_averages_buy }} <span class="subtitle">{{ l.buy_up }}</span></span>
+                            </div>
+                            <div class="position-relative">
+                                <span class="text line-title">{{ activeSignal.moving_averages_sell }} <span class="subtitle">{{ l.sell_up }}</span></span>
+                                <i style="position: absolute; top: 30%; right: -13;" class="text-danger fa fa-caret-up"></i>
+                            </div>
+                        </div>
+                        <div class="d-flex position-absolute ind-chart">
+                            <svg width="350px" height="15px" style="opacity: 0.9">
+                                <defs>
+                                    <mask id="mask2">
+                                        <g fill="white">
+                                            <circle cx="2%" cy="7.5" r="4.5" />
+                                            <circle cx="6%" cy="7.5" r="4.2" />
+                                            <circle cx="10%" cy="7.5" r="4" />
+                                            <circle cx="14%" cy="7.5" r="3.8" />
+                                            <circle cx="18%" cy="7.5" r="3.6" />
+                                            <circle cx="22%" cy="7.5" r="3.4" />
+                                            <circle cx="26%" cy="7.5" r="3.2" />
+                                            <circle cx="30%" cy="7.5" r="3.0" />
+                                            <circle cx="34%" cy="7.5" r="2.8" />
+                                            <circle cx="38%" cy="7.5" r="2.6" />
+                                            <circle cx="42%" cy="7.5" r="2.4" />
+                                            <circle cx="46%" cy="7.5" r="2.2" />
+                                            <circle cx="50%" cy="7.5" r="2" />
+                                            <circle cx="54%" cy="7.5" r="2.2" />
+                                            <circle cx="58%" cy="7.5" r="2.4" />
+                                            <circle cx="62%" cy="7.5" r="2.6" />
+                                            <circle cx="66%" cy="7.5" r="2.8" />
+                                            <circle cx="70%" cy="7.5" r="3.0" />
+                                            <circle cx="74%" cy="7.5" r="3.2" />
+                                            <circle cx="78%" cy="7.5" r="3.4" />
+                                            <circle cx="82%" cy="7.5" r="3.6" />
+                                            <circle cx="86%" cy="7.5" r="3.8" />
+                                            <circle cx="90%" cy="7.5" r="4.0" />
+                                            <circle cx="94%" cy="7.5" r="4.2" />
+                                            <circle cx="98%" cy="7.5" r="4.5" />
+                                        </g>
+                                    </mask>
+                                </defs>
+                                <linearGradient id="linear-gradient2">
+                                    <stop offset="0%" stop-color="#0ad700" />
+                                    <stop :offset="activeSignal.moving_averages_buy / (activeSignal.moving_averages_buy + activeSignal.moving_averages_sell) *100-1  + '%'" stop-color="#0ad700" />
+                                    <stop :offset="activeSignal.moving_averages_buy / (activeSignal.moving_averages_buy + activeSignal.moving_averages_sell) *100+1  + '%'" stop-color="#cc0000" />
+                                    <stop offset="100%" stop-color="#cc0000" />
+                                </linearGradient>
+
+                                <rect fill="url(#linear-gradient2)" width="350px" height="15px" mask="url(#mask2)" />
+                            </svg>
+                            <!--<div class="line-chart-green" :style='{width: activeSignal.moving_averages_buy / (activeSignal.moving_averages_buy + activeSignal.moving_averages_sell) *100  + "%"}'></div>
                             <div class="line-chart-red" :style='{width: activeSignal.moving_averages_sell / (activeSignal.moving_averages_buy + activeSignal.moving_averages_sell) *100  + "%"}'></div>
+                        -->
                         </div>
                     </div>
                 </div>
+
                 <div class="ind ind3 mt-4">
-                    <div class="title"> {{ l.members_entiments }} </div>
-                    <div class="d-flex flex-row justify-content-around">
-                        <span class="text text-success line-title">{{ activeSignal.world_trend_buy }}%<span class="subtitle"> {{ l.buy_up }} </span></span>
-                        <span class="text text-danger line-title">{{ activeSignal.world_trend_sell }}%<span class="subtitle"> {{ l.sell_up }} </span></span>
+                    <div class="title ucfirst">
+                        {{ l.members_entiments }}
+                        <i v-if="activeSignal.world_trend_buy > activeSignal.world_trend_sell" class="fa fa-caret-up text-success"></i>
+                        <i v-else-if="activeSignal.world_trend_buy < activeSignal.world_trend_sell" class="fa fa-caret-down text-danger"></i>
                     </div>
-                    <div class="d-flex flex-row justify-content-center">
-                        <div class="line-chart-green" :style='{width: activeSignal.world_trend_buy + "%"}'> </div>
-                        <div class="line-chart-red" :style='{width: activeSignal.world_trend_sell + "%"}'> </div>
+                    <div class="d-flex flex-row justify-content-around">
+                        <div class="position-relative">
+                            <i style="position: absolute; top: 30%; left: -17;" class="text-success fa fa-caret-up"></i>
+                            <span class="text text- line-title ucfirst">{{ activeSignal.world_trend_buy }}%<span class="subtitle"> {{ l.buy_up }} </span></span>
+                        </div>
+                        <div class="position-relative">
+                            <span class="text text- line-title ucfirst">{{ activeSignal.world_trend_sell }}%<span class="subtitle"> {{ l.sell_up }} </span></span>
+                            <i style="position: absolute; top: 30%; right: -17;" class="text-danger fa fa-caret-up"></i>
+                        </div>
+                    </div>
+                    <div class="d-flex flex-row justify-content-center ind-chart">
+
+                        <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="450px" height="15px" style="opacity: 0.9">
+                            <defs>
+                                <mask id="mask1">
+                                    <g fill="white">
+                                        <circle cx="2%" cy="7.5" r="4.5" />
+                                        <circle cx="6%" cy="7.5" r="4.2" />
+                                        <circle cx="10%" cy="7.5" r="4" />
+                                        <circle cx="14%" cy="7.5" r="3.8" />
+                                        <circle cx="18%" cy="7.5" r="3.6" />
+                                        <circle cx="22%" cy="7.5" r="3.4" />
+                                        <circle cx="26%" cy="7.5" r="3.2" />
+                                        <circle cx="30%" cy="7.5" r="3.0" />
+                                        <circle cx="34%" cy="7.5" r="2.8" />
+                                        <circle cx="38%" cy="7.5" r="2.6" />
+                                        <circle cx="42%" cy="7.5" r="2.4" />
+                                        <circle cx="46%" cy="7.5" r="2.2" />
+                                        <circle cx="50%" cy="7.5" r="2" />
+                                        <circle cx="54%" cy="7.5" r="2.2" />
+                                        <circle cx="58%" cy="7.5" r="2.4" />
+                                        <circle cx="62%" cy="7.5" r="2.6" />
+                                        <circle cx="66%" cy="7.5" r="2.8" />
+                                        <circle cx="70%" cy="7.5" r="3.0" />
+                                        <circle cx="74%" cy="7.5" r="3.2" />
+                                        <circle cx="78%" cy="7.5" r="3.4" />
+                                        <circle cx="82%" cy="7.5" r="3.6" />
+                                        <circle cx="86%" cy="7.5" r="3.8" />
+                                        <circle cx="90%" cy="7.5" r="4.0" />
+                                        <circle cx="94%" cy="7.5" r="4.2" />
+                                        <circle cx="98%" cy="7.5" r="4.5" />
+                                    </g>
+                                </mask>
+                            </defs>
+                            <linearGradient id="linear-gradient">
+                                <stop offset="0%" stop-color="#0ad700" />
+                                <stop :offset="activeSignal.world_trend_buy-1 + '%'" stop-color="#0ad700" />
+                                <stop :offset="activeSignal.world_trend_buy+1 + '%'" stop-color="#cc0000" />
+                                <stop offset="100%" stop-color="#cc0000" />
+                            </linearGradient>
+
+                            <rect fill="url(#linear-gradient)" width="450px" height="15px" mask="url(#mask1)" />
+                        </svg>
                     </div>
                 </div>
             </div>
-            <div class="time-select contain mt-5">
+            <div class="time-select contain mt-4">
                 <div class="time" v-for="signal in signals[activeCurrency]" v-bind:time="signal.time" v-bind:class='{"active": signal.time == activeTime}' v-on:click.prevent="setTime(signal.time)">
-                    <a href="#">{{ secondsToStr(signal.time) }} </a>
+                    <a href="#">
+                        {{ secondsToStr(signal.time) }}
+                        <i v-if="getCurrencyWithSignal(activeCurrency, signal.time).conclusion == 1" class="fa fa-caret-up text-success"></i>
+                        <i v-if="getCurrencyWithSignal(activeCurrency, signal.time).conclusion == -1" class="fa fa-caret-down text-danger"></i>
+                    </a>
                 </div>
             </div>
 
         </div>
 
-        <div v-else class="auth-form contain">
-            <form action="#" v-on:submit.prevent="requestRegister()">
-                <h1 class="auth-title">{{ l.auth }}</h1>
-                <div class="form-group">
-                    <label for="access_token">{{ l.write_private_key }}</label>
-                    <input class="form-control" v-model="registerAccessToken" name="access_token" id="access_token" placeholder=".." required>
-                    <span class="text-danger" v-show="registerError">{{ registerError }}</span>
-                </div>
-                <button class="btn btn-success btn-large"><i class="fa fa-check"></i> {{ l.activate }}</button>
-            </form>
+        <div v-else class="auth-form contain pt-5">
+            <div class="card">
+                <div class="card-move"></div>
+                <form action="#" v-on:submit.prevent="requestRegister()">
+                    <h5 class="auth-title">{{ l.auth }}</h5>
+                    <p class="subtitle">{{ l.put_your_access_token_for_use_it }}</p>
+                    <div class="form-group mt-5 mb-5">
+                        <label for="access_token" class="text-small">{{ l.write_private_key }}</label>
+                        <input class="form-control" v-model="registerAccessToken" name="access_token" id="access_token" placeholder=".." required>
+                        <span class="text-danger text-small position-relative" style="top: 5px;" v-show="registerError">{{ registerError }}</span>
+                    </div>
+                    <button class="btn btn-login btn-large">{{ l.activate }}</button>
+                </form>
+            </div>
         </div>
 
         <div class="devider contain mt-5"></div>
@@ -160,25 +344,26 @@
         <div class="contacts contain d-flex flex-row justify-content-between ">
             <div class="mr-auo ml-auo"> </div>
             <div class="links ml-aut mr-ato">
-                <span class="link" onclick="openExternal('http://vk.com')"><i class="fab fa-vk text text-info"></i></span>
-                <span class="link" onclick="openExternal('http://youtube.com')"><i class="fab fa-youtube text text-danger"></i></span>
-                <span class="link" onclick="openExternal('http://tg.me')"><i class="fa fa-paper-plane text-info"></i></span>
-                <span class="link" onclick="openExternal('http://vk.com')"><i class="fab fa-vk"></i></span>
-                <span class="link" onclick="openExternal('http://vk.com')"><i class="fab fa-vk"></i></span>
-                <span class="link" onclick="win.webContents.openDevTools()"><i class="fab fa-vk"></i></span>
+                <span class="link" onclick="openExternal('https://vk.com/signalexchange')"><i class="fab fa-vk text text-info"></i></span>
+                <span class="link" onclick="openExternal('https://vk.cc/9HiqqB')"><i class="fab fa-youtube text text-danger"></i></span>
+                <span class="link" onclick="openExternal('https://vk.cc/8YLsRF')"><i class="fa fa-paper-plane text-info"></i></span>
+                <span class="link" style="opacity: 0.01" v-on:click.prevent=" notify('hello', 'У нас для вас нвоое уведомление!')"><i class="fab fa-vk"></i></span>
             </div>
             <div class="sets ml-auto ">
-                <div>
+                <div class="d-inline-block">
                     <div class="d-flex flex-row justify-content-center">
                         <div class="lang icon" v-bind:class='{"active": locale == "en"}' id="en" v-on:click="setLocale('en')">EN</div>
                         <div class="lang icon" v-bind:class='{"active": locale == "ru"}' id="ru" v-on:click="setLocale('ru')">RU</div>
                     </div>
                 </div>
-                <div class="notify icon text-info" :title="l.notifications_title" v-on:click.prevent="toggleNotifications()">
+                <div class="notify icon  pointer" :title="l.notifications_title" v-on:click.prevent="toggleNotifications()">
                     <i class="fa fa-bell"></i>
                 </div>
-                <div class="volume icon text-info pointer" :title="l.silent_title" v-on:click.prevent="toggleNotificationsVolume()">
+                <div class="volume icon  pointer" :title="l.silent_title" v-on:click.prevent="toggleNotificationsVolume()">
                     <i class="fa fa-volume-up"></i>
+                </div>
+                <div class="settings icon  pointer" :class='{active: showGlobal}' :title="l.select_currencies_title" v-on:click.prevent="toggleGlobal()">
+                    <i class="fa fa-cog" :class='{"fa-spin": showGlobal}'></i>
                 </div>
             </div>
             <!--

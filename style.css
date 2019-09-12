@@ -1,10 +1,11 @@
 body {
-    background-color: #272727;
+    background-color: #1e2432;
     color: white !important;
     padding: 0;
     margin: 0;
     -webkit-user-select: none;
-    background: #0d131d;
+    background: #1e2432;
+    font-family: "Roboto", sans-serif;
 }
 
 * {
@@ -15,9 +16,7 @@ body {
 }
 
 .nav {
-    background: #0d131d;
-    background-size: cover;
-    border-bottom: 1px solid rgba(1, 1, 1, 0.1);
+    background: #1e2432;
     color: white !important;
     -webkit-app-region: drag;
     cursor: pointer !important;
@@ -25,6 +24,67 @@ body {
     padding: 3px;
     width: 100vw;
     position: fixed;
+}
+
+.ind1 .value
+{
+    margin-top: 13px !important;
+    font-size: 24px;
+    color: rgba(250, 200, 200, 1);
+}
+
+.pair-slider .slider .pair.hidden
+{
+    display: none;
+}
+
+.pair-slider .selector
+{
+    color: white;
+    position: absolute;
+    left: 41px;
+    bottom: 4px;
+    cursor: pointer;
+    width: 18.3%;
+    background-color: rgba(1,1,1,0.5);
+    display: inline-block;
+    text-align: center;
+}
+
+.pair-slider .selector:hover .pairs
+{
+    display: block;
+}
+
+.pair-slider .selector .pairs
+{
+    width: 100%;
+    position: absolute;
+    top: 15px;
+    display: none;
+}
+
+.pair-slider .selector .pairs .pair
+{
+    display: inline-block;
+    width: 100%;
+    text-align: center;
+}
+
+.ucfirst:first-letter
+{
+    text-transform: uppercase;
+}
+
+.pair-slider .selector .pairs .pair div
+{
+    display: inline-block;
+}
+
+
+.pair-slider .selector .pairs .pair .show
+{
+    margin-left: auto;
 }
 
 @keyframes slide-up-arrow
@@ -73,6 +133,26 @@ body {
 
 }
 
+
+
+.lang:first-child {
+    border-radius: 5px 0 0 5px;
+}
+
+.lang:last-child {
+    border-radius: 0 4px 4px 0;
+}
+
+.lang {
+    cursor: pointer;
+    border: 1px solid #33314a;
+}
+
+.lang.active {
+    background-color: #33314a;
+    color: #f0f0f0
+}
+
 .pointer
 {
     cursor: pointer;
@@ -99,7 +179,7 @@ body {
     padding: 0;
     font-size: 14px;
     font-weight: 100;
-    -webkit-text-stroke: 1px white;
+    -webkit-text-stroke: 1px #f0f0f0
     border-radius: 0;
 }
 
@@ -114,6 +194,13 @@ body {
     color: #0c9eda !important;
 }
 
+.sets .icon {
+    width: 30px;
+    height: 26px;
+    text-align: center;
+    display: inline-block;
+    color: #878eaf;
+}
 .nav .btn-close {
     font-size: 20px !important;
     border-width: 0;
@@ -128,6 +215,7 @@ body {
     justify-content: center;
     align-items: center;
     height: 100px;
+    position: relative;
 }
 
 .pair-slider>div {
@@ -156,6 +244,12 @@ body {
     transition: left 5s ease-out;
 }
 
+
+.global .pair-slider .slider
+{
+    overflow: normal;
+}
+
 .pair-slider .slider .pair {
     display: inline-block;
     margin: 0;
@@ -174,7 +268,7 @@ body {
 
 .pair-slider .slider .pair.active {
     border-top: 2px solid #02a6f2;
-    background: url(resources/img/pair-bg.jpg);
+    background: rgba(1,1,1,0);
     background-size: 50%;
 }
 
@@ -215,7 +309,8 @@ body {
 }
 
 .ind {
-    background-color: rgba(30,39,53, 0.6);
+    background: rgb(51,49,74);
+    background: linear-gradient(45deg, rgba(51,49,74,1) 0%, rgba(39,74,114,1) 100%);
     border-radius: 0px;
     color: #292929;
     font-weight: 600;
@@ -225,39 +320,50 @@ body {
 
 .ind1, .ind2 {
     width: 48.4%;
-    height: 100px
+    height: 130px
 }
 
 .ind3 {
     width: 100%;
     padding-bottom: 20px;
+    background: #253958 !important;
 }
 
 .ind .title {
     margin-bottom: 10px;
-    text-transform: uppercase;
     font-size: 15px;
+    line-height: 2;
     font-weight: 600;
-    color: white;
+    color: #f0f0f0;
     text-align: left;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+
+.ind .title:first-letter {
+    text-transform: uppercase;
 }
 
 .label {
     padding: 3px;
     color: rgba(250, 200, 200, 1);
-    -webkit-mask-image: linear-gradient(to left, rgba(0, 0, 0, 0), rgba(0, 0, 0, 1),rgba(0, 0, 0, 1), rgba(0, 0, 0, 0));
+    -webkit-mask-image: linear-gradient(to left, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 1) 25%,rgba(0, 0, 0, 1) 75%, rgba(0, 0, 0, 0) 100%);
     -webkit-mask-size: 100% 100%;
     -webkit-mask-repeat: no-repeat;
     -webkit-mask-position: left top, left bottom;
+
+    clip-path: polygon(0% 0%, 5% 50%, 0% 100%, 100% 100%, 95% 50%, 100% 0%, 0% 0%);
 }
 
 .label-danger {
     background-color: rgba(223, 85, 58, 0.8);
-
 }
+
+
 
 .label-success {
     background-color: rgba(42, 167, 109, 1);
+
 }
 
 .label-success {
@@ -332,16 +438,19 @@ body {
 
 .line-title
 {
+    color: #e6e6e6;
     line-height: 1.5;
-    font-size: 28px;
+    font-size: 30px;
     margin-top: -10px;
 }
 
 .line-title .subtitle
 {
+    color: #9196a9;
     font-size: 12px;
     display: block;
     margin-top: -10px;
+    text-align: center;
 }
 
 .contacts .link {
@@ -361,13 +470,13 @@ body {
 
 .time-select .time a {
     display: block;
-    border-right: 2px solid #17597e;
-    border-top: 2px solid #17597e;
-    border-bottom: 2px solid #17597e;
+    border-right: 1px solid #7579a5;
+    border-top: 1px solid #7579a5;
+    border-bottom: 1px solid #7579a5;
     text-transform: uppercase;
     font-size: 16px;
     padding: 5px 25px;
-    color: rgba(255, 255, 255, 0.5);
+    color: #7579a5;
     text-decoration: none;
     cursor: pointer;
     box-sizing: padding-box;
@@ -376,7 +485,7 @@ body {
 }
 
 .time-select .time:first-child a {
-    border-left: 2px solid #17597e;
+    border-left: 1px solid #7579a5;
     border-radius: 5px 0 0 5px;
 }
 
@@ -386,8 +495,8 @@ body {
 
 .time-select .time.active a {
     display: block;
-    background-color: #17597e;
-    color: white;
+    background-color: #33314a;
+    color: #c1c1c3;
 }
 
 .self-signal {
@@ -404,8 +513,17 @@ body {
     width: 50%;
 }
 
+.line-chart
+{
+    position: absolute;
+    width: 400px;
+    background-color: red;
+    height: 1px;
+
+    clip-path: url(#mask1);
+}
 .line-chart-green {
-    background-color: rgba(42, 167, 109, 1);
+    ackground-color: rgba(42, 167, 109, 1);
     width: 70%;
     height: 5px;
     -webkit-mask-image: linear-gradient(to left, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0));
@@ -428,32 +546,71 @@ body {
     display: inline-block;
 }
 
-.sets .icon {
-    width: 30px;
-    height: 26px;
-    text-align: center;
-}
 
-.lang:first-child {
-    border-radius: 5px 0 0 5px;
-}
 
-.lang:last-child {
-    border-radius: 0 4px 4px 0;
-}
-
-.lang {
-    cursor: pointer;
-    border: 1px solid #17597e;
-}
-
-.lang.active {
-    background-color: #17597e;
-    color: white;
-}
 
 .notify {
     cursor: pointer;
+    color: #878eaf;
+}
+
+.auth-form .card
+{
+    background-color: #253958 !important;
+    padding: 50px;
+    position: relative;
+}
+
+.auth-form .card .card-move
+{
+    position: absolute;
+    width: 100%;
+    height: 10px;
+    top: 0;
+    left: 0;
+    background: linear-gradient(45deg, rgba(51,49,74,1) 0%, rgba(51,49,74,1) 48%, rgba(39,74,114,1) 52%, rgba(39,74,114,1) 100%);
+}
+
+.auth-form
+{
+    color: #f0f0f0;
+    width: 80%;
+}
+.auth-form .subtitle
+{
+    color: #777f8f;
+    font-size: 18px;
+}
+
+.auth-form .text-small
+{
+    font-size: 14px;
+}
+
+.auth-form label
+{
+    color: #656f81;
+}
+
+.auth-form input, .auth-form input:active, .auth-form input:focus
+{
+    background-color: #222f43;
+    border: 1px solid #445570;
+    width: 350px;
+}
+
+.btn-login
+{
+    font-size: 20px;
+    width: 235px;
+    height:50px;
+    border: 2px solid #67758a;
+    color: #d4d5d8;
+}
+
+.btn-login:hover, .btn-login:active
+{
+    background-color: #67758a;
 }
 
 .auth-form
@@ -469,4 +626,193 @@ body {
 .link
 {
     cursor: pointer;
+}
+
+
+.label-outline-danger
+{
+    border: 1px solid red;
+    display: inline-block;
+    padding: 5px 20px;
+    border-radius: 70px;
+}
+
+.label-outline-success
+{
+    border: 1px solid  #28a745!important;
+    display: inline-block;
+    padding: 5px 20px;
+    border-radius: 70px;
+}
+
+.label-outline-neutrally
+{
+    border: 1px solid rgba(250, 200, 200, 1);
+    display: inline-block;
+    padding: 5px 20px;
+    border-radius: 70px;
+}
+
+.open-global
+{
+    height: 500px;
+    width: 30px;
+    background-image: linear-gradient(to left, #1e2432, rgb(100, 106, 120, 0.5));
+
+    position: absolute;
+    left: 0;
+    top: 100px;
+}
+
+.global
+{
+    z-index: 10000;
+    width: 0px;
+    position: absolute;
+    padding-top: 50px;
+    top: 0px;
+    left: 0px;
+    background: #1e2432;
+    display: none;
+    text-align: center;
+    overflow: block;
+    height: 500px;
+    opacity: 0;
+    padding-bottom: 20px;
+    transition: all 0.1s ease-out;
+}
+
+.global .title
+{
+    margin-bottom: 20px;
+}
+
+.global .slider
+{
+    background-color: #1e2432;
+}
+
+svg, .ind-chart
+{
+    transition: none;
+}
+
+.settings
+{
+    transition-duration: 0.1s;
+}
+
+i.settings
+{
+    transition-duration: 0.05s !important;
+}
+
+.settings i.fa-spin
+{
+    animation-duration: 5s !important;
+}
+
+.settings.active
+{
+    color: white;
+}
+
+.globalOpen
+{
+    display: block;
+    opacity: 1;
+    width: 900px;
+    animation: 0.2s opacityShow linear;
+}
+
+@keyframes opacityShow
+{
+    0%
+    {
+        opacity: 0;
+    }
+    100%
+    {
+        opacity: 1;
+    }
+}
+
+.opacity1
+{
+    opacity: 1;
+}
+/*
+.open-global:hover~.global, .global:hover, .open-global.hover~.global, .global.hover
+{
+    width: 900px;
+    opacity: 1;
+    animation: global 0.2s ease-in-out;
+}
+
+.open-global:hover~.pair-slider, .global:hover~.pair-slider, .open-global.hover~.pair-slider, .global.hover~.pair-slider
+{
+    opacity: 0.01 !important;
+}
+*/
+.global .slider .pair
+{
+    display: inline-block;
+    margin: 2px;
+    width: 160.35px;
+    height: 60px;
+    border-right: 2px solid #192431;
+    border-top: 2px solid #192431;
+    border-radius: 0px;
+    cursor: pointer;
+    background-color: #1d2a38;
+    transition: opacity 0.4s ease-out, background-color 0.3s ease-out;
+    position: relative;
+}
+
+
+@keyframes global
+{
+    0%
+    {
+        width: 900px;
+        opacity: 0;
+    }
+    100% {
+        width: 900px;
+        opacity: 1;
+    }
+}
+
+.global .slider .pair>div
+{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    font-size: 22px;
+    position: relative;
+
+}
+
+.global .slider .pair.hidden {
+    background-color: #1e2432;
+    backgrfound-size: 50%;
+    opacity: 0.2;
+}
+
+.global .slider .pair .presignal
+{
+    font-size: 12.5px;
+    position: absolute;
+    top: -2px;
+    right: 5px;
+}
+.global .slider .pair .status
+{
+    font-size: 12.5px;
+    position: absolute;
+    bottom: -2px;
+    right: 5px;
 }

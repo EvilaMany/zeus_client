@@ -1,5 +1,10 @@
 {
+	"url": "http://zeuscp.fun",
 	"locale": "ru",
-	"url": "http://bitcer.com",
-	"access_token": "lolkek2"
+	"access_token": "testkey",
+	"hiddenSignals": {
+		"EUR/JPY": 1,
+		"US Wheat": 1,
+		"Silver": 1
+	}
 }

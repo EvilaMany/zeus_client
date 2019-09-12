@@ -53,13 +53,13 @@ function createWindow() {
         resizable: false,
         icon: __dirname + '/resources/img/logo64.png',
         autoHideMenuBar: true,
-        backgroundColor: "#272727"
+        backgroundColor: "#1e2432"
     })
 
     // and load the index.html of the app.
     win.loadFile('index.html')
 
-    win.webContents.openDevTools()
+    //win.webContents.openDevTools()
     // Отображаем средства разработчика.
     //win.webContents.openDevTools()
 
