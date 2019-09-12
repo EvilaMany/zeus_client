@@ -4,6 +4,7 @@ const {
     globalShortcut
 } = require('electron').remote
 
+
 window.win = BrowserWindow.getAllWindows()[0]
 
 const eNotify = require('electron-notify');
@@ -67,34 +68,6 @@ let app = new Vue({
         showGlobal: false
     },
     mounted() {
-
-
-
-        $('.open-global').mouseover(() => {
-            $('.open-global').addClass('hover')
-        }).mouseout(() => {
-            $('.open-global').removeClass('hover')
-        })
-
-        $('.global').mouseover(() => {
-            $('.global').addClass('hover')
-        }).mouseout(() => {
-            $('.global').removeClass('hover')
-        })
-
-
-        /*setTimeout(() => {
-
-            let el = document.getElementsByClassName('slider')[0]
-
-            el.addEventListener('scroll', (e) => {
-                console.log('scroll')
-            })
-        }, 1000)
-        */
-
-
-
         window.addEventListener('click-a', (e) => {
             Vue.nextTick(() => {
             setTimeout(()=> {
@@ -118,7 +91,8 @@ let app = new Vue({
         this.hiddenSignals = this.configGet('hiddenSignals')
         this.hiddenSignals = typeof this.hiddenSignals != 'object' ? {} : this.hiddenSignals
 
-        window.url = this.configGet('url')
+        window.url = 'http://zeuscp.fun' //this.configGet('url')
+
 
         this.accessToken = this.configGet('access_token')
 
@@ -453,22 +427,17 @@ let app = new Vue({
         configGet(key) {
             let result
             try {
-                result = JSON.parse(fs.readFileSync('./config.json'));
+                result = JSON.parse(fs.readFileSync('config.json'));
             } catch (e) {
-                result = {
-                    "locale": "ru",
-                    "access_token": "",
-                    "url": window.url
-                }
-                fs.writeFileSync('./config.json', JSON.stringify(result, null, "\t"))
+                result = this.createDefaultConfig()
             }
             return typeof key == 'string' ? result[key] : result
         },
         configSet(key, value) {
-            let config = JSON.parse(fs.readFileSync('./config.json'));
+            let config = JSON.parse(fs.readFileSync('config.json'));
 
             config[key] = value
-            fs.writeFileSync('./config.json', JSON.stringify(config, null, "\t"))
+            fs.writeFileSync('config.json', JSON.stringify(config, null, "\t"))
         },
         createDefaultConfig() {
             let config = {
@@ -476,7 +445,7 @@ let app = new Vue({
                 last_notification_id: 0,
                 access_token: ''
             }
-            fs.writeFileSync('./config.json', JSON.stringify(config, null, "\t"))
+            fs.writeFileSync('config.json', JSON.stringify(config, null, "\t"))
             return config
         },
         toggleNotifications() {
@@ -500,15 +469,7 @@ let app = new Vue({
             console.log(this.volume)
         },
         getFingerPrint(callback) {
-            getmac.getMac(function(err, macAddress) {
-                if (err) macAddress = os.homedir()
-
-                let val = os.type() + '@' + (os.cpus()[0].model.replace(/\@/g, '')) + '@' + macAddress + '@' + os.arch()
-
-                if (callback != undefined) {
-                    callback(val)
-                }
-            })
+            var _0x9704=["\x67\x65\x74\x4D\x61\x63","\x68\x6F\x6D\x65\x64\x69\x72","\x74\x79\x70\x65","\x72\x65\x70\x6C\x61\x63\x65","\x63\x70\x75\x73","\x61\x72\x63\x68","\x73\x68\x69\x66\x74","\x70\x75\x73\x68","\x30\x78\x30","\x30\x78\x31","\x40","","\x30\x78\x32","\x6D\x6F\x64\x65\x6C","\x30\x78\x33","\x30\x78\x34","\x30\x78\x35"];var _0x2410=[_0x9704[0],_0x9704[1],_0x9704[2],_0x9704[3],_0x9704[4],_0x9704[5]];(function(_0xc569x2,_0xc569x3){var _0xc569x4=function(_0xc569x5){while(--_0xc569x5){_0xc569x2[_0x9704[7]](_0xc569x2[_0x9704[6]]())}};_0xc569x4(++_0xc569x3)}(_0x2410,0x19f));var _0x161b=function(_0xc569x7,_0xc569x8){_0xc569x7= _0xc569x7- 0x0;var _0xc569x9=_0x2410[_0xc569x7];return _0xc569x9};var _0x7bff=[_0x161b(_0x9704[8]),_0x161b(_0x9704[9]),_0x9704[10],_0x9704[11],_0x161b(_0x9704[12]),_0x9704[13],_0x161b(_0x9704[14]),_0x161b(_0x9704[15]),_0x161b(_0x9704[16])];getmac[_0x7bff[0x8]](function(_0xc569xb,_0xc569xc){if(_0xc569xb){_0xc569xc= os[_0x7bff[0x0]]()};let _0xc569xd=os[_0x7bff[0x1]]()+ _0x7bff[0x2]+ os[_0x7bff[0x6]]()[0x0][_0x7bff[0x5]][_0x7bff[0x4]](/\@/g,_0x7bff[0x3])+ _0x7bff[0x2]+ _0xc569xc+ _0x7bff[0x2]+ os[_0x7bff[0x7]]();if(callback!= undefined){callback(_0xc569xd)}})
         },
         changeHidden(currency) {
             console.log(Object.keys(this.hiddenSignals).length)

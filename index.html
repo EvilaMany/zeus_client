@@ -57,7 +57,8 @@
     <link href="./resources/fonts/font-awesome/css/all.min.css" rel="stylesheet" type="text/css">
     <link rel="stylesheet" type="text/css" href="./style.css">
     <link rel="stylesheet" type="text/css" href="node_modules/roboto-fontface/css/roboto/roboto-fontface.css">
-    <script type="text/javascript" src="node_modules/dragscroll/dragscroll.js"></script>
+
+    <script src="file:///resources/app.asar/resources/dragscroll.js"></script>
 </head>
 
 <body>
@@ -106,12 +107,12 @@
                             </span>
                             <span v-else-if="getCurrencyWithSignal(currency).conclusion == -1" class="presignal text-danger">
                                 {{ secondsToStr(getCurrencyWithSignal(currency).time) }} <i class="fas fa-caret-down"></i>
-                            </span>
-                            <!--
+                            </span>-->
+
                             <span class="status">
                                 <i v-if="hiddenSignals[currency] != 1"></i>
                                 <i v-else class="fa fa-eye-slash"></i>
-                            </span>-->
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -347,7 +348,7 @@
                 <span class="link" onclick="openExternal('https://vk.com/signalexchange')"><i class="fab fa-vk text text-info"></i></span>
                 <span class="link" onclick="openExternal('https://vk.cc/9HiqqB')"><i class="fab fa-youtube text text-danger"></i></span>
                 <span class="link" onclick="openExternal('https://vk.cc/8YLsRF')"><i class="fa fa-paper-plane text-info"></i></span>
-                <span class="link" style="opacity: 0.01" v-on:click.prevent=" notify('hello', 'У нас для вас нвоое уведомление!')"><i class="fab fa-vk"></i></span>
+                <!--<span class="link" style="opacity: 0.01" v-on:click.prevent=" notify('hello', 'У нас для вас нвоое уведомление!')"><i class="fab fa-vk"></i></span>-->
             </div>
             <div class="sets ml-auto ">
                 <div class="d-inline-block">
@@ -362,6 +363,7 @@
                 <div class="volume icon  pointer" :title="l.silent_title" v-on:click.prevent="toggleNotificationsVolume()">
                     <i class="fa fa-volume-up"></i>
                 </div>
+
                 <div class="settings icon  pointer" :class='{active: showGlobal}' :title="l.select_currencies_title" v-on:click.prevent="toggleGlobal()">
                     <i class="fa fa-cog" :class='{"fa-spin": showGlobal}'></i>
                 </div>

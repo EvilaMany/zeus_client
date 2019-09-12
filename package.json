@@ -1,6 +1,6 @@
 {
     "name": "Zeus",
-    "version": "0.1.0",
+    "version": "0.9.0",
     "main": "main.js",
 
     "build": {
@@ -9,21 +9,24 @@
 
         "files": [
             "node_modules/**/*",
-            "config.json"
+            "config.json",
+            "node_modules/dragscroll/dragscroll.js"
         ],
         "directories": {
             "buildResources": "resources"
         },
         "extraFiles": [
+            "node_modules/dragscroll/dragscroll.js",
             "js/controls.js",
             "local"
         ],
         "extraResources": [
+            "node_modules/dragscroll",
             "resources"
         ],
         "win": {
             "target": [{
-                "target": "msi",
+                "target": "nsis-web",
                 "arch": [
                     "x64",
                     "ia32"
