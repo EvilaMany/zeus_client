@@ -1,9 +1,17 @@
 {
     "name": "Zeus",
-    "version": "0.9.0",
+    "version": "1.0.0",
     "main": "main.js",
 
     "build": {
+        "nsis": {
+            "oneClick": false,
+            "uzeZip": true
+        },
+        "asar": false,
+        "nsis": {
+            "oneClick": false
+        },
         "appId": "com.zeus.quickstart",
         "extraFiles": ["**/*", "config.json"],
 
@@ -24,9 +32,16 @@
             "node_modules/dragscroll",
             "resources"
         ],
+        "oneClick": false,
         "win": {
+            "noMsi": false,
+            "msi": true,
+            "oneClick": false,
             "target": [{
-                "target": "nsis-web",
+                "noMsi": false,
+                "msi": true,
+                "target": "msi",
+                "oneClick": false,
                 "arch": [
                     "x64",
                     "ia32"

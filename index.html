@@ -41,13 +41,31 @@
 
         .text-test {
             position: absolute;
-            display: inline;
+            bottom: 350;
+            left: 0;
+            color: rgba(255, 255, 255, 0);
+            background-color: rgba(1, 1, 1, 0);
+            padding: 0 !important;
+            max-width: 225px;
+            font-family: "Calibri", sans-serif;
+            font-size: 16px;
+            font-weight: 100;
+            line-height: 15px;
+            text-transform: "none";
+        }
+        .title-test {
+            padding: 0 !important;
+            bottom: 50;
+            left: 0;
+            position: absolute;
             color: rgba(255, 255, 255, 0);
             background-color: rgba(1, 1, 1, 0);
             max-width: 230px;
             font-family: "Calibri", sans-serif;
             font-size: 15px;
             line-height: 15px;
+            font-weight: 900;
+            text-transform: uppercase;
         }
     </style>
 
@@ -64,7 +82,8 @@
 <body>
 
 
-    <span class="text-test"></span>
+    <p class="text-test"></p>
+    <p class="title-test"></p>
     <div class="preloader">
         <img src="resources/img/logo.png" class="logo w-25">
     </div>
@@ -345,10 +364,11 @@
         <div class="contacts contain d-flex flex-row justify-content-between ">
             <div class="mr-auo ml-auo"> </div>
             <div class="links ml-aut mr-ato">
+                <span style="color:rgba(255,255,255,0.06);position:absolute; left: 2px;bottom: 0px">{{ secondsFromLastRequest }}</span>
                 <span class="link" onclick="openExternal('https://vk.com/signalexchange')"><i class="fab fa-vk text text-info"></i></span>
                 <span class="link" onclick="openExternal('https://vk.cc/9HiqqB')"><i class="fab fa-youtube text text-danger"></i></span>
                 <span class="link" onclick="openExternal('https://vk.cc/8YLsRF')"><i class="fa fa-paper-plane text-info"></i></span>
-                <!--<span class="link" style="opacity: 0.01" v-on:click.prevent=" notify('hello', 'У нас для вас нвоое уведомление!')"><i class="fab fa-vk"></i></span>-->
+                <!--<span class="link" style="opacity: 0.01" v-on:click.prevent=" notify('Привет мир! Привет мир! Привет мир! П р  !', 'Привет м и р ! П р и в е ! П р и в е т мир! Привет мир!')"><i class="fab fa-vk"></i></span>-->
             </div>
             <div class="sets ml-auto ">
                 <div class="d-inline-block">

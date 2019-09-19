@@ -9,12 +9,17 @@ const {
 // автоматически закрываться, когда объект JavaScript собирает мусор.
 let win, tray
 
+let debug = false
+
+let prefix = !debug ? 'resources/app.asar' : '.'
+
+
+
 function createWindow() {
 
 
-
     //создает tray-окошко
-    tray = new Tray('resources/app.asar/resources/img/logo32.ico')
+    tray = new Tray(prefix + '/resources/img/logo32.ico')
     const contextMenu = Menu.buildFromTemplate([{
             label: 'Развернуть',
             click: () => {
@@ -47,11 +52,12 @@ function createWindow() {
         width: 900,
         height: 650,
         frame: false,
+        transparent: false,
         webPreferences: {
             nodeIntegration: true
         },
         resizable: false,
-        icon: __dirname + 'resources/app.asar/resources/img/logo64.png',
+        icon: __dirname + prefix + '/resources/img/logo64.png',
         autoHideMenuBar: true,
         backgroundColor: "#1e2432"
     })
@@ -59,7 +65,7 @@ function createWindow() {
     // and load the index.html of the app.
     win.loadFile('index.html')
 
-    win.webContents.openDevTools()
+    //win.webContents.openDevTools()
     // Отображаем средства разработчика.
     //win.webContents.openDevTools()
 
@@ -70,6 +76,9 @@ function createWindow() {
         // тогда вы должны удалить соответствующий элемент.
         win = null
     })
+
+
+    //win.webContents.openDevTools();
 }
 
 // Этот метод будет вызываться, когда Electron закончит

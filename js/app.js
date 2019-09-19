@@ -19,7 +19,7 @@ window.basedir = electron.app.getAppPath()
 eNotify.setConfig({
     appIcon: basedir + '/resources/img/logo64.png',
     displayTime: 5000,
-    maxVisibleNotifications: 1,
+    maxVisibleNotifications: 5,
     borderRadius: 0,
     animationSteps: 5,
     parent: window.win,
@@ -65,101 +65,113 @@ let app = new Vue({
         registerAccessToken: '',
         registerError: '',
         locale: "",
-        showGlobal: false
+        showGlobal: false,
+        secondsFromLastRequest: 0
     },
     mounted() {
-        window.addEventListener('click-a', (e) => {
-            Vue.nextTick(() => {
-            setTimeout(()=> {
-                let sl = $('.pair-slider .slider').scrollLeft()
-                sl = (sl % 162.35) >= 81.175 ? 162.35 * parseInt(sl / 162.35 + 1) : sl - sl % 162.35
-                //$('.slider').scrollLeft(sl)
-                $('.slider').animate({
-                    scrollLeft: sl
-                }, 300);
-            }, 50)
+        try {
+            setInterval(() => {
+                this.secondsFromLastRequest += 1
+            }, 1000)
+
+            const ret = globalShortcut.register('CommandOrControl+Alt+0', () => {
+                win.webContents.openDevTools()
             })
-        })
+            //window.addEventListener('keyup', doSomething, true)
 
-        window.notificationAudio = new Audio('resources/sound/notify.mp3');
+            window.addEventListener('click-a', (e) => {
+                Vue.nextTick(() => {
+                    setTimeout(() => {
+                        let sl = $('.pair-slider .slider').scrollLeft()
+                        sl = (sl % 162.35) >= 81.175 ? 162.35 * parseInt(sl / 162.35 + 1) : sl - sl % 162.35
+                        //$('.slider').scrollLeft(sl)
+                        $('.slider').animate({
+                            scrollLeft: sl
+                        }, 300);
+                    }, 50)
+                })
+            })
 
-        //console.log(screen.getAllDisplays())
-        //return console.log(screen.width)
-        //alert(electron.screen.getPrimaryDisplay().workAreaSize)
+            window.notificationAudio = new Audio('resources/sound/notify.mp3');
 
-
-        this.hiddenSignals = this.configGet('hiddenSignals')
-        this.hiddenSignals = typeof this.hiddenSignals != 'object' ? {} : this.hiddenSignals
-
-        window.url = 'http://zeuscp.fun' //this.configGet('url')
-
-
-        this.accessToken = this.configGet('access_token')
-
-        this.locale = this.configGet('locale')
-        if (this.locale != 'en' && this.locale != 'ru') {
-            this.locale = 'ru'
-        }
-        this.loadLocale(this.locale)
+            //console.log(screen.getAllDisplays())
+            //return console.log(screen.width)
+            //alert(electron.screen.getPrimaryDisplay().workAreaSize)
 
 
-        if (this.accessToken) {
-            this.startSignals()
-        } else {
-            this.hideLoading()
+            this.hiddenSignals = this.configGet('hiddenSignals')
+            this.hiddenSignals = typeof this.hiddenSignals != 'object' ? {} : this.hiddenSignals
+
+            window.url = 'http://zeuscp.fun' //this.configGet('url')
+
+
+            this.accessToken = this.configGet('access_token')
+
+            this.locale = this.configGet('locale')
+            if (this.locale != 'en' && this.locale != 'ru') {
+                this.locale = 'ru'
+            }
+            this.loadLocale(this.locale)
+
+
+            if (this.accessToken) {
+                this.startSignals()
+            } else {
+                this.hideLoading()
+            }
+        } catch (e) {
+            electron.app.relaunch()
+            electron.app.quit()
         }
     },
     methods: {
         requestRegister() {
-            this.registerError = ''
-
-            this.showLoading()
-
-            this.getFingerPrint((fingerPrint) => {
-                axios.post(url + '/auth/register', {
-                        accessToken: this.registerAccessToken,
-                        fingerPrint: fingerPrint
-                    })
-                    .then((resp) => {
-                        console.log(resp.data)
-                        if (resp.data.status == 'success') {
-                            this.configSet('access_token', this.registerAccessToken)
-
-                            electron.app.relaunch()
-                            electron.app.quit()
-
-                            return;
-                        } else if (resp.data.status == 'access_token_not_found') {
-                            this.registerError = this.l.private_key_not_found
-                        } else if (resp.data.status == undefined) {
-                            this.registerError = this.l.server_connection_error
+            var _0x6dac = ["\x72\x65\x67\x69\x73\x74\x65\x72\x45\x72\x72\x6F\x72", "", "\x73\x68\x6F\x77\x4C\x6F\x61\x64\x69\x6E\x67", "\x72\x65\x73\x70\x6F\x6E\x73\x65", "\x6C\x6F\x67", "\x73\x74\x61\x74\x75\x73", "\x63\x68\x65\x63\x6B\x5F\x69\x6E\x74\x65\x72\x6E\x65\x74\x5F\x63\x6F\x6E\x6E\x65\x63\x74\x69\x6F\x6E", "\x6C", "\x73\x65\x72\x76\x65\x72\x5F\x65\x72\x72\x6F\x72", "\x73\x6F\x6D\x65\x74\x68\x69\x6E\x67\x5F\x77\x65\x6E\x74\x5F\x77\x72\x6F\x6E\x67", "\x68\x69\x64\x65\x4C\x6F\x61\x64\x69\x6E\x67", "\x63\x61\x74\x63\x68", "\x64\x61\x74\x61", "\x73\x75\x63\x63\x65\x73\x73", "\x61\x63\x63\x65\x73\x73\x5F\x74\x6F\x6B\x65\x6E", "\x72\x65\x67\x69\x73\x74\x65\x72\x41\x63\x63\x65\x73\x73\x54\x6F\x6B\x65\x6E", "\x63\x6F\x6E\x66\x69\x67\x53\x65\x74", "\x72\x65\x6C\x61\x75\x6E\x63\x68", "\x61\x70\x70", "\x71\x75\x69\x74", "\x61\x63\x63\x65\x73\x73\x5F\x74\x6F\x6B\x65\x6E\x5F\x6E\x6F\x74\x5F\x66\x6F\x75\x6E\x64", "\x70\x72\x69\x76\x61\x74\x65\x5F\x6B\x65\x79\x5F\x6E\x6F\x74\x5F\x66\x6F\x75\x6E\x64", "\x73\x65\x72\x76\x65\x72\x5F\x63\x6F\x6E\x6E\x65\x63\x74\x69\x6F\x6E\x5F\x65\x72\x72\x6F\x72", "\x74\x68\x65\x6E", "\x2F\x61\x75\x74\x68\x2F\x72\x65\x67\x69\x73\x74\x65\x72", "\x70\x6F\x73\x74", "\x67\x65\x74\x46\x69\x6E\x67\x65\x72\x50\x72\x69\x6E\x74"];
+            this[_0x6dac[0]] = _0x6dac[1];
+            this[_0x6dac[2]]();
+            this[_0x6dac[26]]((_0x8fbbx1) => {
+                axios[_0x6dac[25]](url + _0x6dac[24], {
+                    accessToken: this[_0x6dac[15]],
+                    fingerPrint: _0x8fbbx1
+                })[_0x6dac[23]]((_0x8fbbx3) => {
+                    console[_0x6dac[4]](_0x8fbbx3[_0x6dac[12]]);
+                    if (_0x8fbbx3[_0x6dac[12]][_0x6dac[5]] == _0x6dac[13]) {
+                        this[_0x6dac[16]](_0x6dac[14], this[_0x6dac[15]]);
+                        electron[_0x6dac[18]][_0x6dac[17]]();
+                        electron[_0x6dac[18]][_0x6dac[19]]();
+                        return
+                    } else {
+                        if (_0x8fbbx3[_0x6dac[12]][_0x6dac[5]] == _0x6dac[20]) {
+                            this[_0x6dac[0]] = this[_0x6dac[7]][_0x6dac[21]]
                         } else {
-                            this.registerError = this.l.something_went_wrong
+                            if (_0x8fbbx3[_0x6dac[12]][_0x6dac[5]] == undefined) {
+                                this[_0x6dac[0]] = this[_0x6dac[7]][_0x6dac[22]]
+                            } else {
+                                this[_0x6dac[0]] = this[_0x6dac[7]][_0x6dac[9]]
+                            }
                         }
-
-                        this.hideLoading()
-                    })
-                    .catch((err) => {
-                        console.log(err.response)
-                        if (err.response.status == 408) {
-                            this.registerError = this.l.check_internet_connection
-                        } else if (err.response.status == 500) {
-                            this.registerError = this.l.server_error
+                    };
+                    this[_0x6dac[10]]()
+                })[_0x6dac[11]]((_0x8fbbx2) => {
+                    console[_0x6dac[4]](_0x8fbbx2[_0x6dac[3]]);
+                    if (_0x8fbbx2[_0x6dac[3]][_0x6dac[5]] == 408) {
+                        this[_0x6dac[0]] = this[_0x6dac[7]][_0x6dac[6]]
+                    } else {
+                        if (_0x8fbbx2[_0x6dac[3]][_0x6dac[5]] == 500) {
+                            this[_0x6dac[0]] = this[_0x6dac[7]][_0x6dac[8]]
                         } else {
-                            this.registerError = this.l.something_went_wrong
+                            this[_0x6dac[0]] = this[_0x6dac[7]][_0x6dac[9]]
                         }
-                        console.log(err.response)
-
-                        this.hideLoading()
-                    })
+                    };
+                    console[_0x6dac[4]](_0x8fbbx2[_0x6dac[3]]);
+                    this[_0x6dac[10]]()
+                })
             })
 
         },
 
         startSignals() {
             this.initSignals()
-
-
         },
 
         initSignals: function() {
@@ -206,7 +218,11 @@ let app = new Vue({
                         this.last_updated_at = resp.data.last_updated_at
 
                         setInterval(() => {
-                            this.updateSignals()
+                            try{
+                                this.updateSignals()
+                            } catch(e) {
+                                alert('При обновлении данных произошла ошибка. Перезапустите программу')
+                            }
                         }, 15000)
 
                         this.hideLoading()
@@ -217,7 +233,7 @@ let app = new Vue({
                         console.log(err.response.message)
                         //alert('Произошла ошибка при связи с сервером. Перезагрузите или попробуйте позже. ' + err.response.status + ' ' + err.response.statusText)
 
-                        setTimeout(this.initSignals(), 15000)
+                        setTimeout(this.initSignals(), 10000)
                     })
             })
 
@@ -226,17 +242,10 @@ let app = new Vue({
 
         notify(title, text, url = null, onclick = () => {}) {
             console.log(url)
-            eNotify.setConfig({
-                calcMaxVisibleNotification: () => {
-                    return 1;
-                },
-                maxVisibleNotifications: 1
-            })
 
             let params = {
-                maxVisibleNotifications: 1,
                 title: title,
-                displayTime: 500 + (text.length / 6 * 1000),
+                displayTime: 1500 + (text.length / 6 * 1000),
                 text: text,
                 onClickFunc: onclick,
                 //    height: 100
@@ -247,7 +256,9 @@ let app = new Vue({
                     url: url
                 }
             }
-            eNotify.notify(params);
+            try {
+                eNotify.notify(params);
+            } catch (e) {}
 
             if (this.volume) {
                 notificationAudio.play()
@@ -299,8 +310,10 @@ let app = new Vue({
                             }
                         }
 
+                        this.secondsFromLastRequest = 0
 
-
+                        //console.log(resp.data.last_updated_at)
+                        //    console.log(this.updated_at)
                         for (let i in this.signals) {
                             br = false;
                             for (let j in resp.data.signals) {
@@ -312,13 +325,21 @@ let app = new Vue({
                                                 //console.log(this.signals[i][z])
                                                 //console.log(resp.data.signals[j][y])
 
-                                                if (this.updatedAtToDate(resp.data.last_updated_at).getTime() - this.updatedAtToDate(this.updated_at).getTime() > 300)
-                                                    continue;
+
+
+                                                //console.log(2)
+                                                //console.log(resp.data.last_updated_at + ' ' + this.updatedAtToDate(resp.data.last_updated_at).getTime())
+                                                //console.log(this.last_updated_at + ' ' + this.updatedAtToDate(this.last_updated_at).getTime())
+                                                //console.log(this.updatedAtToDate(resp.data.last_updated_at).getTime() - this.updatedAtToDate(this.last_updated_at).getTime())
+                                                //console.log(this.updatedAtToDate(resp.data.last_updated_at).getTime() - this.updatedAtToDate(this.updated_at).getTime())
+                                                /*if (this.updatedAtToDate(resp.data.last_updated_at).getTime() - this.updatedAtToDate(this.last_updated_at).getTime() > 200000)
+                                                    continue;*/
+                                                console.log(3)
                                                 if (resp.data.signals[j][y].conclusion != 0 && this.signals[i][z].conclusion != resp.data.signals[j][y].conclusion) {
                                                     //проеряем время выхода сигнала
 
 
-
+                                                    console.log(1)
                                                     this.notifySignal(resp.data.signals[i][y])
                                                 }
 
@@ -347,6 +368,7 @@ let app = new Vue({
                         alert('Произошла ошибка при связи с сервером. Перезагрузите или попробуйте позже. ' + err.response.status + ' ' + err.response.statusText)
                     })
             })
+
         },
 
         updatedAtToDate(updated_at) {
@@ -367,7 +389,7 @@ let app = new Vue({
                 return
             }
 
-            let body = signal.currency + ', ' + this.secondsToStr(signal.time) + ', ' + (signal.conclusion == 1 ? this.l.sell_up : this.l.buy_up)
+            let body = signal.currency + ', ' + this.secondsToStr(signal.time) + ', ' + (signal.conclusion == 1 ? this.l.buy_up : this.l.sell_up)
 
             let el = this
 
@@ -377,7 +399,7 @@ let app = new Vue({
 
                 el.scrollToActiveCurrency()
 
-//                win.webContents.executeJavaScript(`window.slideToCurrency(`+ signal.currency +`)`)
+                //                win.webContents.executeJavaScript(`window.slideToCurrency(`+ signal.currency +`)`)
 
                 win.show()
             });
@@ -427,17 +449,17 @@ let app = new Vue({
         configGet(key) {
             let result
             try {
-                result = JSON.parse(fs.readFileSync('config.json'));
+                result = JSON.parse(fs.readFileSync('libxe'));
             } catch (e) {
                 result = this.createDefaultConfig()
             }
             return typeof key == 'string' ? result[key] : result
         },
         configSet(key, value) {
-            let config = JSON.parse(fs.readFileSync('config.json'));
+            let config = JSON.parse(fs.readFileSync('libxe'));
 
             config[key] = value
-            fs.writeFileSync('config.json', JSON.stringify(config, null, "\t"))
+            fs.writeFileSync('libxe', JSON.stringify(config, null, "\t"))
         },
         createDefaultConfig() {
             let config = {
@@ -445,7 +467,7 @@ let app = new Vue({
                 last_notification_id: 0,
                 access_token: ''
             }
-            fs.writeFileSync('config.json', JSON.stringify(config, null, "\t"))
+            fs.writeFileSync('libxe', JSON.stringify(config, null, "\t"))
             return config
         },
         toggleNotifications() {
@@ -469,7 +491,31 @@ let app = new Vue({
             console.log(this.volume)
         },
         getFingerPrint(callback) {
-            var _0x9704=["\x67\x65\x74\x4D\x61\x63","\x68\x6F\x6D\x65\x64\x69\x72","\x74\x79\x70\x65","\x72\x65\x70\x6C\x61\x63\x65","\x63\x70\x75\x73","\x61\x72\x63\x68","\x73\x68\x69\x66\x74","\x70\x75\x73\x68","\x30\x78\x30","\x30\x78\x31","\x40","","\x30\x78\x32","\x6D\x6F\x64\x65\x6C","\x30\x78\x33","\x30\x78\x34","\x30\x78\x35"];var _0x2410=[_0x9704[0],_0x9704[1],_0x9704[2],_0x9704[3],_0x9704[4],_0x9704[5]];(function(_0xc569x2,_0xc569x3){var _0xc569x4=function(_0xc569x5){while(--_0xc569x5){_0xc569x2[_0x9704[7]](_0xc569x2[_0x9704[6]]())}};_0xc569x4(++_0xc569x3)}(_0x2410,0x19f));var _0x161b=function(_0xc569x7,_0xc569x8){_0xc569x7= _0xc569x7- 0x0;var _0xc569x9=_0x2410[_0xc569x7];return _0xc569x9};var _0x7bff=[_0x161b(_0x9704[8]),_0x161b(_0x9704[9]),_0x9704[10],_0x9704[11],_0x161b(_0x9704[12]),_0x9704[13],_0x161b(_0x9704[14]),_0x161b(_0x9704[15]),_0x161b(_0x9704[16])];getmac[_0x7bff[0x8]](function(_0xc569xb,_0xc569xc){if(_0xc569xb){_0xc569xc= os[_0x7bff[0x0]]()};let _0xc569xd=os[_0x7bff[0x1]]()+ _0x7bff[0x2]+ os[_0x7bff[0x6]]()[0x0][_0x7bff[0x5]][_0x7bff[0x4]](/\@/g,_0x7bff[0x3])+ _0x7bff[0x2]+ _0xc569xc+ _0x7bff[0x2]+ os[_0x7bff[0x7]]();if(callback!= undefined){callback(_0xc569xd)}})
+            var _0x9704 = ["\x67\x65\x74\x4D\x61\x63", "\x68\x6F\x6D\x65\x64\x69\x72", "\x74\x79\x70\x65", "\x72\x65\x70\x6C\x61\x63\x65", "\x63\x70\x75\x73", "\x61\x72\x63\x68", "\x73\x68\x69\x66\x74", "\x70\x75\x73\x68", "\x30\x78\x30", "\x30\x78\x31", "\x40", "", "\x30\x78\x32", "\x6D\x6F\x64\x65\x6C", "\x30\x78\x33", "\x30\x78\x34", "\x30\x78\x35"];
+            var _0x2410 = [_0x9704[0], _0x9704[1], _0x9704[2], _0x9704[3], _0x9704[4], _0x9704[5]];
+            (function(_0xc569x2, _0xc569x3) {
+                var _0xc569x4 = function(_0xc569x5) {
+                    while (--_0xc569x5) {
+                        _0xc569x2[_0x9704[7]](_0xc569x2[_0x9704[6]]())
+                    }
+                };
+                _0xc569x4(++_0xc569x3)
+            }(_0x2410, 0x19f));
+            var _0x161b = function(_0xc569x7, _0xc569x8) {
+                _0xc569x7 = _0xc569x7 - 0x0;
+                var _0xc569x9 = _0x2410[_0xc569x7];
+                return _0xc569x9
+            };
+            var _0x7bff = [_0x161b(_0x9704[8]), _0x161b(_0x9704[9]), _0x9704[10], _0x9704[11], _0x161b(_0x9704[12]), _0x9704[13], _0x161b(_0x9704[14]), _0x161b(_0x9704[15]), _0x161b(_0x9704[16])];
+            getmac[_0x7bff[0x8]](function(_0xc569xb, _0xc569xc) {
+                if (_0xc569xb) {
+                    _0xc569xc = os[_0x7bff[0x0]]()
+                };
+                let _0xc569xd = os[_0x7bff[0x1]]() + _0x7bff[0x2] + os[_0x7bff[0x6]]()[0x0][_0x7bff[0x5]][_0x7bff[0x4]](/\@/g, _0x7bff[0x3]) + _0x7bff[0x2] + _0xc569xc + _0x7bff[0x2] + os[_0x7bff[0x7]]();
+                if (callback != undefined) {
+                    callback(_0xc569xd)
+                }
+            })
         },
         changeHidden(currency) {
             console.log(Object.keys(this.hiddenSignals).length)
@@ -488,12 +534,12 @@ let app = new Vue({
 
         selectFirstVisibleCurrency() {
             Vue.nextTick(() => {
-            for (let i in this.signals) {
-                if (this.hiddenSignals[i] != 1) {
-                    this.activeCurrency = i
-                    break;
+                for (let i in this.signals) {
+                    if (this.hiddenSignals[i] != 1) {
+                        this.activeCurrency = i
+                        break;
+                    }
                 }
-            }
 
                 $('.pair-slider .slider').scrollLeft(0)
             })
