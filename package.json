@@ -1,7 +1,19 @@
 {
     "name": "Zeus",
-    "version": "2.0.3",
+    "version": "v2.0.3",
     "main": "main.js",
+    "repository": {
+      "type" : "git",
+      "url" : "https://github.com/EvilaMany/zeus_client.git",
+      "provider": "github",
+      "token": "c1a006dba4f6b2027c6d0bc02ffe579e95ea1360",
+      "repo": "zeus_client",
+      "owner": "EvilaMany",
+      "host": "github.com",
+      "protocol": "https",
+      "private": 0,
+      "publishAutoUpdate": 1
+    },
     "build": {
         "appId": "MyApp",
         "mac": {
