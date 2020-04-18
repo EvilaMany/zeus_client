@@ -53,6 +53,7 @@
             line-height: 15px;
             text-transform: "none";
         }
+
         .title-test {
             padding: 0 !important;
             bottom: 50;
@@ -67,6 +68,70 @@
             font-weight: 900;
             text-transform: uppercase;
         }
+
+        .sidebar {
+            background-color: #112943;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            width: 35px;
+            position: fixed;
+            left: 0;
+            top: 0px;
+            min-height: 100vh;
+            width: 7vw;
+            z-index: 9999999;
+            padding-top: 50px;
+            color: #01ccff;
+            font-size: 28px;
+            text-align: center;
+        }
+
+        .sidebar .top>div {
+            margin-bottom: 35px;
+        }
+
+        .sidebar .lang-selector>div {
+            font-size: 20px;
+            cursor: pointer;
+            color: white;
+        }
+
+        .sidebar .bottom>div {
+            margin: 18px 0;
+            font-size: 24px;
+        }
+
+        .sidebar .bottom {
+            font-size: 30px;
+            padding-bottom: 30px;
+            color: #cfd4d9 !important;
+        }
+
+        main {
+            margin-left: 7vw;
+        }
+
+        .sidebar .link i, .sidebar .link
+        {
+            transition-duration: 0s !important;
+        }
+
+        .sidebar .link.vk:hover
+        {
+            color: #446DAA;
+        }
+
+        .sidebar .link.telegram:hover
+        {
+            color: #188ADA;
+        }
+
+        .sidebar .link.youtube:hover
+        {
+            color: #DD2521;
+        }
     </style>
 
     <script src="node_modules/cryptojslib/rollups/aes.js"></script>
@@ -75,8 +140,19 @@
     <link href="./resources/fonts/font-awesome/css/all.min.css" rel="stylesheet" type="text/css">
     <link rel="stylesheet" type="text/css" href="./style.css">
     <link rel="stylesheet" type="text/css" href="node_modules/roboto-fontface/css/roboto/roboto-fontface.css">
+    <link rel="stylsheet" type="text/css" href="node_modules/slick-carousel/slick/slick.css">
+    <link rel="stylsheet" type="text/css" href="node_modules/slick-carousel/slick/slick-theme.css">
 
-    <script src="file:///resources/app.asar/resources/dragscroll.js"></script>
+    <!--<script src="file:///resources/app.asar/resources/dragscroll.js"></script>-->
+    <!--<script src="file:///resources/dragscroll.js"></script>-->
+    <script>
+        window.getGlobal = (name) => (require('electron').remote).getGlobal(name)
+
+        let script = document.createElement('script')
+        script.src = getGlobal('debug') ? 'file:///resources/dragscroll.js' : 'file:///resources/app.asar/resources/dragscroll.js'
+
+        document.querySelector('head').append(script)
+    </script>
 </head>
 
 <body>
@@ -96,31 +172,63 @@
         </div>
     </nav>
     <div class="wrapper" id="app" style="display: none">
-
-
-
-
-
-        <nav class="nav" >
+        <nav class="nav">
             <div class="buttons-control ml-auto" v-on:mouseout="showGlobal = false">
                 <button class="btn text-info btn-minimize"><i class="fal fa-window-minimize"></i></button>
-                <button class="btn text-danger btn-close"><i class="fal fa-times" ></i></button>
+                <button class="btn text-danger btn-close"><i class="fal fa-times"></i></button>
             </div>
         </nav>
 
-        <div class="signals" v-if="accessToken">
 
-            <div class="pt-4"> </div>
+        <div class="sidebar d-flex flex-column justify-content-between align-items-center">
+            <div class="top">
+                    <div  v-show="accessToken.length" class="notify icon  pointer" :title="l.notifications_title" v-on:click.prevent="toggleNotifications()">
+                        <i class="fa fa-bell"></i>
+                    </div>
+                    <div  v-show="accessToken.length" class="volume icon  pointer" :title="l.silent_title" v-on:click.prevent="toggleNotificationsVolume()">
+                        <i class="fa fa-volume-up"></i>
+                    </div>
+                    <div  v-show="accessToken.length" class="settings icon  pointer" :class='{active: showGlobal}' :title="l.select_currencies_title" v-on:click.prevent="toggleGlobal()">
+                        <i class="fa fa-cog" :class='{"fa-spin": showGlobal}'></i>
+                    </div>
+            </div>
+
+            <div class="bottom">
+                <div>
+                    <span style="color:rgba(255,255,255,0.06);position:absolute; left: 2px;bottom: 0px;font-size: 12px;">{{ secondsFromLastRequest }}</span>
+                </div>
+                <div>
+                    <span class="link vk" onclick="openExternal('https://vk.com/signalexchange')"><i class="fab fa-vk text"></i></span>
+                </div>
+                <div>
+                    <span class="link youtube" onclick="openExternal('https://vk.cc/9HiqqB')"><i class="fab fa-youtube text"></i></span>
+                </div>
+                <div>
+                    <span class="link telegram" onclick="openExternal('https://vk.cc/8YLsRF')"><i class="fa fa-paper-plane"></i></span>
+                </div>
+
+                <div class="lang-selector mt-5" style="font-size: 14px;">
+                    <div class="" v-show='locale == "en"' id="en" v-on:click.prevent="setLocale('ru')">EN</div>
+                    <div class="" v-show='locale == "ru"' id="ru" v-on:click.prevent="setLocale('en')">RU</div>
+                </div>
+            </div>
+        </div>
+
+        <main>
+            <div class="signals" v-if="accessToken">
 
 
-            <!--<div class="open-global"></div>-->
-            <div class="global" :class='{"globalOpen": this.showGlobal}' >
-                <h4 class="title">{{ l.select_currencies_for_showing }}</h4>
-                <div class="slider">
-                    <div class="pair" v-for="signals, currency in this.signals" v-bind:class='{"hidden": hiddenSignals[currency] == 1}' v-bind:id="'global_' + currency" v-on:click.prevent="changeHidden(currency)">
-                        <div>
-                            <span class="curr">{{ currency }}</span>
-                            <!--
+                <div class="pt-4"> </div>
+
+
+                <!--<div class="open-global"></div>-->
+                <div class="global" :class='{"globalOpen": this.showGlobal}'>
+                    <h4 class="title">{{ l.select_currencies_for_showing }}</h4>
+                    <div class="slider">
+                        <div class="pair" v-for="signals, currency in this.signals" v-bind:class='{"hidden": hiddenSignals[currency] == 1}' v-bind:id="'global_' + currency" v-on:click.prevent="changeHidden(currency)">
+                            <div>
+                                <span class="curr">{{ currency }}</span>
+                                <!--
                             <span v-if="getCurrencyWithSignal(currency).conclusion == 1" class="presignal text-success">
                                 {{ secondsToStr(getCurrencyWithSignal(currency).time) }} <i class="fas fa-caret-up"></i>
                             </span>
@@ -128,33 +236,53 @@
                                 {{ secondsToStr(getCurrencyWithSignal(currency).time) }} <i class="fas fa-caret-down"></i>
                             </span>-->
 
-                            <span class="status">
-                                <i v-if="hiddenSignals[currency] != 1"></i>
-                                <i v-else class="fa fa-eye-slash"></i>
-                            </span>
+                                <span class="status">
+                                    <i v-if="hiddenSignals[currency] != 1"></i>
+                                    <i v-else class="fa fa-eye-slash"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div v-show="noInternet" class="internet" style="width: 100vw; height: 100vh; left: 0; top: 0;display: flex; justify-content: center; align-items: center; position: fixed;z-index: 99999;color: white">
+                    <i class="fa fa-globe fa-spin" title="Проблемы подключения к серверу" style="font-size: 40px; opacity: 0.8;"></i><br>
+                </div>
+
+                <div class="slider-container d-none">
+                    <div class="slider-wrapper">
+                        <div class="pair" v-for="signals, currency in this.signals" v-bind:class='{"active": activeCurrency == currency, "hidden": hiddenSignals[currency] == 1}' v-bind:id="currency" v-on:click.prevent="setCurrency(currency)">
+                            <div>
+                                <span class="curr">{{ currency }}</span>
+                                <span v-if="getCurrencyWithSignal(currency).conclusion == 1" class="presignal text-success">
+                                    {{ secondsToStr(getCurrencyWithSignal(currency).time) }} <i class="fas fa-caret-up"></i>
+                                </span>
+                                <span v-else-if="getCurrencyWithSignal(currency).conclusion == -1" class="presignal text-danger">
+                                    {{ secondsToStr(getCurrencyWithSignal(currency).time) }} <i class="fas fa-caret-down"></i>
+                                </span>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-            </div>
 
-
-            <div class="pair-slider">
-                <div class="left disabled"><i class="fal fa-chevron-left"></i></div>
-                <div class="slider dragscroll slider-main">
-                    <div class="pair" v-for="signals, currency in this.signals" v-bind:class='{"active": activeCurrency == currency, "hidden": hiddenSignals[currency] == 1}' v-bind:id="currency" v-on:click.prevent="setCurrency(currency)">
-                        <div>
-                            <span class="curr">{{ currency }}</span>
-                            <span v-if="getCurrencyWithSignal(currency).conclusion == 1" class="presignal text-success">
-                                {{ secondsToStr(getCurrencyWithSignal(currency).time) }} <i class="fas fa-caret-up"></i>
-                            </span>
-                            <span v-else-if="getCurrencyWithSignal(currency).conclusion == -1" class="presignal text-danger">
-                                {{ secondsToStr(getCurrencyWithSignal(currency).time) }} <i class="fas fa-caret-down"></i>
-                            </span>
+                <div class="pair-slider">
+                    <div class="left disabled"><i class="fal fa-chevron-left"></i></div>
+                    <div class="slider dragscroll slider-main">
+                        <div class="pair" v-for="signals, currency in this.signals" v-bind:class='{"active": activeCurrency == currency, "hidden": hiddenSignals[currency] == 1}' v-bind:id="currency" v-on:click.prevent="setCurrency(currency)">
+                            <div>
+                                <span class="curr">{{ currency }}</span>
+                                <span v-if="getCurrencyWithSignal(currency).conclusion == 1" class="presignal text-success">
+                                    {{ secondsToStr(getCurrencyWithSignal(currency).time) }} <i class="fas fa-caret-up"></i>
+                                </span>
+                                <span v-else-if="getCurrencyWithSignal(currency).conclusion == -1" class="presignal text-danger">
+                                    {{ secondsToStr(getCurrencyWithSignal(currency).time) }} <i class="fas fa-caret-down"></i>
+                                </span>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <!--
+                    <!--
                 <div class="selector">
                     <div class="show">
                         <i class="fa fa-chevron-down"></i>
@@ -173,245 +301,150 @@
                     </div>
                 </div>
             -->
-                <div class="right"><i class="fal fa-chevron-right"></i></div>
-            </div>
+                    <div class="right"><i class="fal fa-chevron-right"></i></div>
+                </div>
 
-            <div class="self-signal mb-3" v-if="activeSignal != null">
-                <span v-if="activeSignal.conclusion == 1" class="label label-success position-relative text-uppercase">
-                    <i class="mr-1 fal fa-chevron-up slide-up-arrow"></i> {{ l.buy }} <i class="ml-1 fal fa-chevron-up slide-up-arrow"></i>
-                </span>
-                <span v-if="activeSignal.conclusion == -1" class="label text-uppercase label-danger position-relative">
-                    <i class="mr-1 fal fa-chevron-down slide-down-arrow "></i> {{ l.sell }} <i class="ml-1 fal fa-chevron-down slide-down-arrow"></i>
-                </span>
-            </div>
 
-            <div class="inds contain" v-if="activeSignal != null">
-                <div class="d-flex flex-row justify-content-between">
-                    <div class="ind ind1">
-                        <div class="title">{{ l.technical_analysis }}
-                            <i v-if="activeSignal.technical_analisis == 1" class="fa fa-caret-up text-success"></i>
-                            <i v-else-if="activeSignal.technical_analisis == -1" class="fa fa-caret-down text-danger"></i>
-                        </div>
-                        <div v-if="activeSignal.technical_analisis == 1" class="mt-1  label-outline-success value    ucfirst">
 
-                            {{ l.active_buy }}
-                            <i class="fa fa-caret-up text-success"></i>
-                        </div>
-                        <div v-else-if="activeSignal.technical_analisis == -1" class="mt-1 value  label-outline-danger  ucfirst">
-                            {{ l.active_sell }}
-                            <i class="fa fa-caret-down text-danger"></i>
-                        </div>
-                        <div v-else class="value  label-outline-neutrally  mt-1 ucfirst">{{ l.neutrally }}</div>
-
-                    </div>
-                    <div class="ind ind2">
-                        <div class="title">
-                            {{ l.moving_averages }}
-                            <i v-if="activeSignal.moving_averages_buy > activeSignal.moving_averages_sell" class="fa fa-caret-up text-success"></i>
-                            <i v-else-if="activeSignal.moving_averages_buy < activeSignal.moving_averages_sell" class="fa fa-caret-down text-danger"></i>
-                        </div>
-                        <div class="d-flex flex-row justify-content-around">
-                            <div class="position-relative">
-                                <i style="position: absolute; top: 30%; left: -13;" class="text-success fa fa-caret-up"></i>
-                                <span class="text line-title">{{ activeSignal.moving_averages_buy }} <span class="subtitle">{{ l.buy_up }}</span></span>
+                <div class="inds contain" v-if="activeSignal != null">
+                    <div class="d-flex flex-row justify-content-between">
+                        <div class="ind ind1">
+                            <div class="title">{{ l.technical_analysis }}
+                                <!--<i v-if="activeSignal.technical_analisis == 1" class="fa fa-caret-up text-success"></i>
+                            <i v-else-if="activeSignal.technical_analisis == -1" class="fa fa-caret-down text-danger"></i>-->
                             </div>
-                            <div class="position-relative">
-                                <span class="text line-title">{{ activeSignal.moving_averages_sell }} <span class="subtitle">{{ l.sell_up }}</span></span>
-                                <i style="position: absolute; top: 30%; right: -13;" class="text-danger fa fa-caret-up"></i>
+                            <div class="body">
+                                <div v-if="activeSignal.technical_analisis == 1" class="label-outline-success value ucfirst">
+                                    {{ l.active_buy }}
+                                </div>
+                                <div v-else-if="activeSignal.technical_analisis == -1" class="value  label-outline-danger  ucfirst">
+                                    {{ l.active_sell }}
+                                </div>
+                                <div v-else class="value  label-outline-neutrally ucfirst">{{ l.neutrally }}</div>
                             </div>
                         </div>
-                        <div class="d-flex position-absolute ind-chart">
-                            <svg width="350px" height="15px" style="opacity: 0.9">
-                                <defs>
-                                    <mask id="mask2">
-                                        <g fill="white">
-                                            <circle cx="2%" cy="7.5" r="4.5" />
-                                            <circle cx="6%" cy="7.5" r="4.2" />
-                                            <circle cx="10%" cy="7.5" r="4" />
-                                            <circle cx="14%" cy="7.5" r="3.8" />
-                                            <circle cx="18%" cy="7.5" r="3.6" />
-                                            <circle cx="22%" cy="7.5" r="3.4" />
-                                            <circle cx="26%" cy="7.5" r="3.2" />
-                                            <circle cx="30%" cy="7.5" r="3.0" />
-                                            <circle cx="34%" cy="7.5" r="2.8" />
-                                            <circle cx="38%" cy="7.5" r="2.6" />
-                                            <circle cx="42%" cy="7.5" r="2.4" />
-                                            <circle cx="46%" cy="7.5" r="2.2" />
-                                            <circle cx="50%" cy="7.5" r="2" />
-                                            <circle cx="54%" cy="7.5" r="2.2" />
-                                            <circle cx="58%" cy="7.5" r="2.4" />
-                                            <circle cx="62%" cy="7.5" r="2.6" />
-                                            <circle cx="66%" cy="7.5" r="2.8" />
-                                            <circle cx="70%" cy="7.5" r="3.0" />
-                                            <circle cx="74%" cy="7.5" r="3.2" />
-                                            <circle cx="78%" cy="7.5" r="3.4" />
-                                            <circle cx="82%" cy="7.5" r="3.6" />
-                                            <circle cx="86%" cy="7.5" r="3.8" />
-                                            <circle cx="90%" cy="7.5" r="4.0" />
-                                            <circle cx="94%" cy="7.5" r="4.2" />
-                                            <circle cx="98%" cy="7.5" r="4.5" />
-                                        </g>
-                                    </mask>
-                                </defs>
-                                <linearGradient id="linear-gradient2">
-                                    <stop offset="0%" stop-color="#0ad700" />
-                                    <stop :offset="activeSignal.moving_averages_buy / (activeSignal.moving_averages_buy + activeSignal.moving_averages_sell) *100-1  + '%'" stop-color="#0ad700" />
-                                    <stop :offset="activeSignal.moving_averages_buy / (activeSignal.moving_averages_buy + activeSignal.moving_averages_sell) *100+1  + '%'" stop-color="#cc0000" />
-                                    <stop offset="100%" stop-color="#cc0000" />
-                                </linearGradient>
+                        <div class="ind ind2">
+                            <div class="title">
+                                {{ l.moving_averages }}
+                                <!--<i v-if="activeSignal.moving_averages_buy > activeSignal.moving_averages_sell" class="fa fa-caret-up text-success"></i>
+                            <i v-else-if="activeSignal.moving_averages_buy < activeSignal.moving_averages_sell" class="fa fa-caret-down text-danger"></i>-->
+                            </div>
+                            <div class="body">
+                                <div class="d-flex flex-row justify-content-between mb-1">
+                                    <span class="subtitle ucfirst">
+                                        {{ l.values_for_buy }}:
+                                        <div class="value position-relative buy mt-1">{{ activeSignal.moving_averages_buy }}</div>
+                                    </span>
+                                    <span class="subtitle ucfirst">{{ l.values_for_sell }}:
+                                        <div class="value position-relative sell mt-1">{{ activeSignal.moving_averages_sell }}</div>
+                                    </span>
+                                </div>
 
-                                <rect fill="url(#linear-gradient2)" width="350px" height="15px" mask="url(#mask2)" />
-                            </svg>
-                            <!--<div class="line-chart-green" :style='{width: activeSignal.moving_averages_buy / (activeSignal.moving_averages_buy + activeSignal.moving_averages_sell) *100  + "%"}'></div>
+                                <div class="d-flex position-absolute ind-chart">
+                                    <svg width="100%" height="10px">
+
+                                        <linearGradient id="linear-gradient2">
+                                            <stop offset="0%" stop-color="#36cb2f" />
+                                            <stop :offset="activeSignal.moving_averages_buy / (activeSignal.moving_averages_buy + activeSignal.moving_averages_sell) *100-12  + '%'" stop-color="#36cb2f" />
+                                            <stop :offset="activeSignal.moving_averages_buy / (activeSignal.moving_averages_buy + activeSignal.moving_averages_sell) *100+12  + '%'" stop-color="#bd5449" />
+                                            <stop offset="100%" stop-color="#bd5449" />
+                                        </linearGradient>
+
+                                        <rect fill="url(#linear-gradient2)" width="350px" height="15px" mask="url(#mask2)" />
+                                    </svg>
+                                    <!--<div class="line-chart-green" :style='{width: activeSignal.moving_averages_buy / (activeSignal.moving_averages_buy + activeSignal.moving_averages_sell) *100  + "%"}'></div>
                             <div class="line-chart-red" :style='{width: activeSignal.moving_averages_sell / (activeSignal.moving_averages_buy + activeSignal.moving_averages_sell) *100  + "%"}'></div>
                         -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="ind ind3 mt-2 pb-2">
+                        <div class="title ucfirst">
+                            {{ l.members_entiments }}
+                        </div>
+                        <div class="body">
+                            <div class="d-flex flex-row justify-content-around mb-2">
+                                <span class="ucfirst">
+                                    {{ l.buy_up }}:
+                                    <div class="value buy">{{ activeSignal.world_trend_buy }}%</div>
+                                </span>
+                                <span class="ucfirst">
+                                    {{ l.sell_up }}:
+                                    <div class="value sell">{{ activeSignal.world_trend_sell }}%</div>
+                                </span>
+                            </div>
+                            <div class="d-flex flex-row justify-content-center ind-chart mt-1">
+                                <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="450px" height="10px">
+                                    <linearGradient id="linear-gradient">
+                                        <stop offset="0%" stop-color="#36cb2f" />
+                                        <stop :offset="activeSignal.world_trend_buy-15 + '%'" stop-color="#36cb2f" />
+                                        <stop :offset="activeSignal.world_trend_buy+15 + '%'" stop-color="#bd5448" />
+                                        <stop offset="100%" stop-color="#bd5448" />
+                                    </linearGradient>
+
+                                    <rect fill="url(#linear-gradient)" width="450px" height="15px" mask="url(#mask1)" />
+                                </svg>
+                            </div>
                         </div>
                     </div>
                 </div>
-
-                <div class="ind ind3 mt-4">
-                    <div class="title ucfirst">
-                        {{ l.members_entiments }}
-                        <i v-if="activeSignal.world_trend_buy > activeSignal.world_trend_sell" class="fa fa-caret-up text-success"></i>
-                        <i v-else-if="activeSignal.world_trend_buy < activeSignal.world_trend_sell" class="fa fa-caret-down text-danger"></i>
+                <div class="time-select contain mt-3">
+                    <div class="time" v-for="signal in signals[activeCurrency]" v-bind:time="signal.time" v-bind:class='{"active": signal.time == activeTime}' v-on:click.prevent="setTime(signal.time)">
+                        <a href="#">
+                            {{ secondsToStr(signal.time) }}
+                            <i v-if="getCurrencyWithSignal(activeCurrency, signal.time).conclusion == 1" class="fa fa-caret-up text-success"></i>
+                            <i v-if="getCurrencyWithSignal(activeCurrency, signal.time).conclusion == -1" class="fa fa-caret-down text-danger"></i>
+                        </a>
                     </div>
-                    <div class="d-flex flex-row justify-content-around">
-                        <div class="position-relative">
-                            <i style="position: absolute; top: 30%; left: -17;" class="text-success fa fa-caret-up"></i>
-                            <span class="text text- line-title ucfirst">{{ activeSignal.world_trend_buy }}%<span class="subtitle"> {{ l.buy_up }} </span></span>
+                </div>
+
+                <!--
+                            <div class="devider contain mt-1"></div>
+-->
+
+                <div class="self-signal mt-4" v-if="activeSignal != null">
+                    <span v-if="activeSignal.conclusion == 1" class="label label-success position-relative text-capitalize">
+                        <i class="fa fa-caret-up text-success mr-2 slide-up-arrow"></i> {{ l.buy }} <i class="ml-2 fa fa-caret-up slide-up-arrow text-success"></i>
+                    </span>
+                    <span v-if="activeSignal.conclusion == -1" class="label label-danger position-relative text-capitalize">
+                        <i class="fa fa-caret-down text-danger mr-2 slide-down-arrow"></i> {{ l.sell }} <i class="ml-2 fa fa-caret-down slide-down-arrow text-danger"></i>
+                    </span>
+                </div>
+
+            </div>
+
+
+            <div v-else class="auth-form contain pt-5">
+                <div class="card pt-5">
+                    <div class="card-move"></div>
+                    <form action="#" v-on:submit.prevent="requestRegister()">
+                        <h5 class="auth-title">{{ l.auth }}</h5>
+                        <p class="subtitle">{{ l.put_your_access_token_for_use_it }}</p>
+                        <div class="form-group mt-5 mb-5">
+                            <label for="access_token" class="text-small">{{ l.write_private_key }}</label>
+                            <input class="form-control" autofocus v-model="registerAccessToken" name="access_token" id="access_token" placeholder=".." required>
+                            <span class="text-danger text-small position-relative" style="top: 5px;" v-show="registerError">{{ registerError }}</span>
                         </div>
-                        <div class="position-relative">
-                            <span class="text text- line-title ucfirst">{{ activeSignal.world_trend_sell }}%<span class="subtitle"> {{ l.sell_up }} </span></span>
-                            <i style="position: absolute; top: 30%; right: -17;" class="text-danger fa fa-caret-up"></i>
-                        </div>
-                    </div>
-                    <div class="d-flex flex-row justify-content-center ind-chart">
-
-                        <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="450px" height="15px" style="opacity: 0.9">
-                            <defs>
-                                <mask id="mask1">
-                                    <g fill="white">
-                                        <circle cx="2%" cy="7.5" r="4.5" />
-                                        <circle cx="6%" cy="7.5" r="4.2" />
-                                        <circle cx="10%" cy="7.5" r="4" />
-                                        <circle cx="14%" cy="7.5" r="3.8" />
-                                        <circle cx="18%" cy="7.5" r="3.6" />
-                                        <circle cx="22%" cy="7.5" r="3.4" />
-                                        <circle cx="26%" cy="7.5" r="3.2" />
-                                        <circle cx="30%" cy="7.5" r="3.0" />
-                                        <circle cx="34%" cy="7.5" r="2.8" />
-                                        <circle cx="38%" cy="7.5" r="2.6" />
-                                        <circle cx="42%" cy="7.5" r="2.4" />
-                                        <circle cx="46%" cy="7.5" r="2.2" />
-                                        <circle cx="50%" cy="7.5" r="2" />
-                                        <circle cx="54%" cy="7.5" r="2.2" />
-                                        <circle cx="58%" cy="7.5" r="2.4" />
-                                        <circle cx="62%" cy="7.5" r="2.6" />
-                                        <circle cx="66%" cy="7.5" r="2.8" />
-                                        <circle cx="70%" cy="7.5" r="3.0" />
-                                        <circle cx="74%" cy="7.5" r="3.2" />
-                                        <circle cx="78%" cy="7.5" r="3.4" />
-                                        <circle cx="82%" cy="7.5" r="3.6" />
-                                        <circle cx="86%" cy="7.5" r="3.8" />
-                                        <circle cx="90%" cy="7.5" r="4.0" />
-                                        <circle cx="94%" cy="7.5" r="4.2" />
-                                        <circle cx="98%" cy="7.5" r="4.5" />
-                                    </g>
-                                </mask>
-                            </defs>
-                            <linearGradient id="linear-gradient">
-                                <stop offset="0%" stop-color="#0ad700" />
-                                <stop :offset="activeSignal.world_trend_buy-1 + '%'" stop-color="#0ad700" />
-                                <stop :offset="activeSignal.world_trend_buy+1 + '%'" stop-color="#cc0000" />
-                                <stop offset="100%" stop-color="#cc0000" />
-                            </linearGradient>
-
-                            <rect fill="url(#linear-gradient)" width="450px" height="15px" mask="url(#mask1)" />
-                        </svg>
-                    </div>
-                </div>
-            </div>
-            <div class="time-select contain mt-4">
-                <div class="time" v-for="signal in signals[activeCurrency]" v-bind:time="signal.time" v-bind:class='{"active": signal.time == activeTime}' v-on:click.prevent="setTime(signal.time)">
-                    <a href="#">
-                        {{ secondsToStr(signal.time) }}
-                        <i v-if="getCurrencyWithSignal(activeCurrency, signal.time).conclusion == 1" class="fa fa-caret-up text-success"></i>
-                        <i v-if="getCurrencyWithSignal(activeCurrency, signal.time).conclusion == -1" class="fa fa-caret-down text-danger"></i>
-                    </a>
+                        <button class="btn btn-login btn-large">{{ l.activate }}</button>
+                    </form>
                 </div>
             </div>
 
-        </div>
-
-        <div v-else class="auth-form contain pt-5">
-            <div class="card">
-                <div class="card-move"></div>
-                <form action="#" v-on:submit.prevent="requestRegister()">
-                    <h5 class="auth-title">{{ l.auth }}</h5>
-                    <p class="subtitle">{{ l.put_your_access_token_for_use_it }}</p>
-                    <div class="form-group mt-5 mb-5">
-                        <label for="access_token" class="text-small">{{ l.write_private_key }}</label>
-                        <input class="form-control" v-model="registerAccessToken" name="access_token" id="access_token" placeholder=".." required>
-                        <span class="text-danger text-small position-relative" style="top: 5px;" v-show="registerError">{{ registerError }}</span>
-                    </div>
-                    <button class="btn btn-login btn-large">{{ l.activate }}</button>
-                </form>
-            </div>
-        </div>
-
-        <div class="devider contain mt-5"></div>
-
-        <div class="contacts contain d-flex flex-row justify-content-between ">
-            <div class="mr-auo ml-auo"> </div>
-            <div class="links ml-aut mr-ato">
-                <span style="color:rgba(255,255,255,0.06);position:absolute; left: 2px;bottom: 0px">{{ secondsFromLastRequest }}</span>
-                <span class="link" onclick="openExternal('https://vk.com/signalexchange')"><i class="fab fa-vk text text-info"></i></span>
-                <span class="link" onclick="openExternal('https://vk.cc/9HiqqB')"><i class="fab fa-youtube text text-danger"></i></span>
-                <span class="link" onclick="openExternal('https://vk.cc/8YLsRF')"><i class="fa fa-paper-plane text-info"></i></span>
-                <!--<span class="link" style="opacity: 0.01" v-on:click.prevent=" notify('Привет мир! Привет мир! Привет мир! П р  !', 'Привет м и р ! П р и в е ! П р и в е т мир! Привет мир!')"><i class="fab fa-vk"></i></span>-->
-            </div>
-            <div class="sets ml-auto ">
-                <div class="d-inline-block">
-                    <div class="d-flex flex-row justify-content-center">
-                        <div class="lang icon" v-bind:class='{"active": locale == "en"}' id="en" v-on:click="setLocale('en')">EN</div>
-                        <div class="lang icon" v-bind:class='{"active": locale == "ru"}' id="ru" v-on:click="setLocale('ru')">RU</div>
-                    </div>
-                </div>
-                <div class="notify icon  pointer" :title="l.notifications_title" v-on:click.prevent="toggleNotifications()">
-                    <i class="fa fa-bell"></i>
-                </div>
-                <div class="volume icon  pointer" :title="l.silent_title" v-on:click.prevent="toggleNotificationsVolume()">
-                    <i class="fa fa-volume-up"></i>
-                </div>
-
-                <div class="settings icon  pointer" :class='{active: showGlobal}' :title="l.select_currencies_title" v-on:click.prevent="toggleGlobal()">
-                    <i class="fa fa-cog" :class='{"fa-spin": showGlobal}'></i>
-                </div>
-            </div>
-            <!--
-            <div class="d-flex flex-row justify-content-between">
-                <div class="buttons">
-                    <div class="btn-group">
-                        <button class="btn btn-control language" id="en">EN</button>
-                        <button class="btn btn-outline-control language" id="ru">RU</button>
-                    </div>
-                    <button class="btn btn-control sound ml-3"><i class="fal fa-volume-up"></i></button>
-                </div>
-            </div>
-            -->
-        </div>
-
-
+        </main>
     </div>
     <script>
         window.$ = window.jQuery = require('jquery');
     </script>
     <script src="./node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="./node_modules/slick-carousel/slick/slick.js"></script>
 
     <script src="node_modules/axios/dist/axios.js"></script>
     <script src="node_modules/vue/dist/vue.js"></script>
     <script src="js/controls.js"></script>
     <script src="js/app.js"></script>
+
 
 </body>
 

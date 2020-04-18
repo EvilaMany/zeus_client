@@ -1,59 +1,25 @@
 {
     "name": "Zeus",
-    "version": "1.0.0",
+    "version": "2.0.3",
     "main": "main.js",
-
     "build": {
-        "nsis": {
-            "oneClick": false,
-            "uzeZip": true
+        "appId": "MyApp",
+        "mac": {
+            "category": "forex"
         },
-        "asar": false,
-        "nsis": {
-            "oneClick": false
-        },
-        "appId": "com.zeus.quickstart",
-        "extraFiles": ["**/*", "config.json"],
-
-        "files": [
-            "node_modules/**/*",
-            "config.json",
-            "node_modules/dragscroll/dragscroll.js"
-        ],
-        "directories": {
-            "buildResources": "resources"
-        },
-        "extraFiles": [
-            "node_modules/dragscroll/dragscroll.js",
-            "js/controls.js",
-            "local"
-        ],
-        "extraResources": [
-            "node_modules/dragscroll",
-            "resources"
-        ],
-        "oneClick": false,
         "win": {
-            "noMsi": false,
-            "msi": true,
-            "oneClick": false,
-            "target": [{
-                "noMsi": false,
-                "msi": true,
-                "target": "msi",
-                "oneClick": false,
-                "arch": [
-                    "x64",
-                    "ia32"
-                ]
-            }],
-            "extraFiles": ["**/*", "config.json"],
-            "extraResources": [
-                "**/*"
-            ]
+            "publish": {
+                "provider": "github",
+                "token": "c1a006dba4f6b2027c6d0bc02ffe579e95ea1360",
+                "repo": "zeus_client",
+                "owner": "EvilaMany",
+                "host": "github.com",
+                "protocol": "https",
+                "private": 0,
+                "publishAutoUpdate": 1
+            }
         }
     },
-
     "icon": "./resources/img/logo64.png",
     "appId": "zeus",
     "scripts": {
@@ -66,12 +32,6 @@
         "electron-packager": "^14.0.4",
         "electron-builder": "^21.2.0"
     },
-    "build": {
-        "appId": "MyApp",
-        "mac": {
-            "category": "forex"
-        }
-    },
     "author": "some men",
     "description": "lol",
     "dependencies": {
@@ -81,11 +41,13 @@
         "cryptojslib": "^3.1.2",
         "electron-notifications": "^1.0.0",
         "electron-notify": "^0.1.0",
+        "electron-updater": "^4.2.5",
         "font-awesome": "^4.7.0",
         "getmac": "^1.4.6",
         "jquery": "^3.4.1",
         "node-notifier": "^5.4.3",
         "roboto-fontface": "^0.10.0",
+        "slick-carousel": "^1.8.1",
         "vue": "^2.6.10"
     },
     "extraResources": [

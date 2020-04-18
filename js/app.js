@@ -4,6 +4,7 @@ const {
     globalShortcut
 } = require('electron').remote
 
+const { remote } = require('electron')
 
 window.win = BrowserWindow.getAllWindows()[0]
 
@@ -28,6 +29,8 @@ eNotify.setConfig({
     }*/
 });
 
+
+let pairWidth = 151.01
 
 let app = new Vue({
     el: '#app',
@@ -66,10 +69,25 @@ let app = new Vue({
         registerError: '',
         locale: "",
         showGlobal: false,
-        secondsFromLastRequest: 0
+        secondsFromLastRequest: 0,
+        noInternet: false
+    },
+    created() {
+        /*setInterval(() => {
+            for(let currency in this.signals) {
+                this.signals[currency].forEach((i) => {
+                    console.log(i)
+                })
+            }
+        }, 1000)*/
     },
     mounted() {
         try {
+
+            $('.pair-slider').on('mousewheel', (e) => {
+                console.log(e)
+            })
+
             setInterval(() => {
                 this.secondsFromLastRequest += 1
             }, 1000)
@@ -83,7 +101,7 @@ let app = new Vue({
                 Vue.nextTick(() => {
                     setTimeout(() => {
                         let sl = $('.pair-slider .slider').scrollLeft()
-                        sl = (sl % 162.35) >= 81.175 ? 162.35 * parseInt(sl / 162.35 + 1) : sl - sl % 162.35
+                        sl = (sl % pairWidth) >= (pairWidth / 2) ? pairWidth * parseInt(sl / pairWidth + 1) : sl - sl % pairWidth
                         //$('.slider').scrollLeft(sl)
                         $('.slider').animate({
                             scrollLeft: sl
@@ -102,7 +120,7 @@ let app = new Vue({
             this.hiddenSignals = this.configGet('hiddenSignals')
             this.hiddenSignals = typeof this.hiddenSignals != 'object' ? {} : this.hiddenSignals
 
-            window.url = 'http://zeuscp.fun' //this.configGet('url')
+            window.url = remote.getGlobal('server_url')
 
 
             this.accessToken = this.configGet('access_token')
@@ -214,6 +232,20 @@ let app = new Vue({
                             this.activeTime = this.signals[i][0].time
                             break
                         }
+
+                        let deltaTime = ((new Date()).getTime() / 1000) - resp.data.time
+                        for (let i in this.signals) {
+                            this.signals[i].forEach((item,j) => {
+                                if(item.conclusion != 0) {
+                                    //alert((new Date(item.updated_at)).getTime() + (item.time * 1000) - (new Date().getTime()))
+                                    //console.log(( (new Date(item.updated_at)).getTime() + (item.time * 1000) - (new Date().getTime()) + deltaTime))
+                                    let delay = ( (new Date(item.updated_at)).getTime() + (90 * 1000) - (new Date().getTime()) + deltaTime)
+                                    setTimeout(() => {
+                                        this.signals[i][j].conclusion = 0
+                                    }, Math.min(delay, 90000) )
+                                }
+                            })
+                        }
                         //console.log(resp.data)
                         this.last_updated_at = resp.data.last_updated_at
 
@@ -221,19 +253,21 @@ let app = new Vue({
                             try{
                                 this.updateSignals()
                             } catch(e) {
-                                alert('При обновлении данных произошла ошибка. Перезапустите программу')
+                                this.noInternet = true
+                                //alert('При обновлении данных произошла ошибка. Перезапустите программу')
                             }
-                        }, 15000)
+                        }, 5000)
+
 
                         this.hideLoading()
                         this.selectFirstVisibleCurrency()
                     })
                     .catch((err) => {
                         console.log(err.response)
-                        console.log(err.response.message)
+                        //console.log(err.response.message)
                         //alert('Произошла ошибка при связи с сервером. Перезагрузите или попробуйте позже. ' + err.response.status + ' ' + err.response.statusText)
 
-                        setTimeout(this.initSignals(), 10000)
+                        setTimeout(this.initSignals(), 3000)
                     })
             })
 
@@ -245,7 +279,7 @@ let app = new Vue({
 
             let params = {
                 title: title,
-                displayTime: 1500 + (text.length / 6 * 1000),
+                displayTime: 5500 + (text.length / 6 * 1000),
                 text: text,
                 onClickFunc: onclick,
                 //    height: 100
@@ -337,10 +371,11 @@ let app = new Vue({
                                                 console.log(3)
                                                 if (resp.data.signals[j][y].conclusion != 0 && this.signals[i][z].conclusion != resp.data.signals[j][y].conclusion) {
                                                     //проеряем время выхода сигнала
-
-
-                                                    console.log(1)
-                                                    this.notifySignal(resp.data.signals[i][y])
+                                                    if(new Date(resp.data.time * 1000) - new Date(resp.data.signals[j][y].updated_at).getTime() < 60000)
+                                                    {
+                                                        console.log(1)
+                                                        this.notifySignal(resp.data.signals[i][y])
+                                                    }
                                                 }
 
                                                 this.signals[i][z] = resp.data.signals[j][y]
@@ -358,14 +393,32 @@ let app = new Vue({
                         }
 
 
+                        let deltaTime = ((new Date()).getTime() / 1000) - resp.data.time
+                        for (let i in this.signals) {
+                            this.signals[i].forEach((item,j) => {
+                                if(item.conclusion != 0) {
+                                    //alert((new Date(item.updated_at)).getTime() + (item.time * 1000) - (new Date().getTime()))
+                                    //console.log(( (new Date(item.updated_at)).getTime() + (item.time * 1000) - (new Date().getTime()) + deltaTime))
+                                    let delay = ( (new Date(item.updated_at)).getTime() + (90 * 1000) - (new Date().getTime()) + deltaTime)
+                                    setTimeout(() => {
+                                        this.signals[i][j].conclusion = 0
+                                    }, Math.min(delay, 90000) )
+                                }
+                            })
+                        }
+
+
                         this.last_updated_at = resp.data.last_updated_at
 
                         //console.log('updated')
                         //console.log(resp.data);
+
+                        this.noInternet = false
                     })
                     .catch((err) => {
                         console.log(err.response)
-                        alert('Произошла ошибка при связи с сервером. Перезагрузите или попробуйте позже. ' + err.response.status + ' ' + err.response.statusText)
+                        this.noInternet = true
+                        //alert('Произошла ошибка при связи с сервером. Перезагрузите или попробуйте позже. ' + err.response.status + ' ' + err.response.statusText)
                     })
             })
 
@@ -549,7 +602,7 @@ let app = new Vue({
             this.showGlobal = !this.showGlobal
         },
         scrollToCurrency(currency) {
-            $('.slider').scrollLeft(parseInt($('#' + currency.replace('/', '\\/').replace(' ', '\\ ')).index() * 162.35))
+            $('.slider').scrollLeft(parseInt($('#' + currency.replace('/', '\\/').replace(' ', '\\ ')).index() * pairWidth))
         },
         scrollToActiveCurrency() {
 

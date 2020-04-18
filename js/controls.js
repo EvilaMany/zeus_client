@@ -64,12 +64,40 @@ function init() {
         let el = document.getElementsByClassName('slider-main')[0]
         let scrollEnd = el.scrollWidth - el.offsetWidth
 
-        if ($('.pair-slider .slider').scrollLeft() >= scrollEnd) {
+        if (Math.floor($('.pair-slider .slider').scrollLeft()) >= scrollEnd) {
             clearInterval(rightInterval)
             $('.pair-slider .right').addClass('disabled')
         } else {
             $('.pair-slider .right').removeClass('disabled')
         }
+    })
+
+
+    let timeout;
+    $('.slider.dragscroll').on('wheel', (e) => {
+        clearTimeout(timeout)
+        $('.slider').stop()
+
+        let delta = e.originalEvent.deltaY != 0 ? -e.originalEvent.deltaY  : e.originalEvent.deltaX
+        if(delta > 100) delta = 151.01
+        if(delta < -100) delta = -151.01
+
+        let el = document.getElementsByClassName('slider-main')[0]
+        let scrollEnd = el.scrollWidth - el.offsetWidth
+
+        let sl = $('.pair-slider .slider').scrollLeft()
+        if(sl >= 0 && $('.pair-slider .slider').scrollLeft() <= scrollEnd)
+            $('.pair-slider .slider').scrollLeft(Math.min(scrollEnd, Math.max(0,sl + delta)))
+
+        timeout = setTimeout(() => {
+            let sl = $('.pair-slider .slider').scrollLeft()
+            let pairWidth = 151.01
+            sl = (sl % pairWidth) >= (pairWidth / 2) ? pairWidth * parseInt(sl / pairWidth + 1) : sl - sl % pairWidth
+            //$('.slider').scrollLeft(sl)
+            $('.slider').animate({
+                scrollLeft: sl
+            }, 200);
+        }, 200)
     })
 
     window.openExternal = function(link)
@@ -79,9 +107,14 @@ function init() {
 
     window.slideToCurrency = function(currency)
     {
-        $('.slider').scrollLeft(parseInt($('#'+currency).index() * 162.35));
+        $('.slider').scrollLeft(parseInt($('#'+currency).index() * 148.95));
         console.log('evec43')
     }
+
+
+
+
+
 };
 
 document.onreadystatechange = () => {

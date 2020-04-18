@@ -5,6 +5,8 @@
     "buy": "buy",
     "buy_up": "buy",
     "active_buy": "strong buy",
+    "values_for_buy": "Values for buy",
+    "values_for_sell": "Values for sell",
     "hour": "hour",
     "hours": "hours",
     "day": "day",
