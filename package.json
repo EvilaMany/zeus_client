@@ -57,7 +57,7 @@
         "font-awesome": "^4.7.0",
         "getmac": "^1.4.6",
         "jquery": "^3.4.1",
-        "node-notifier": "^5.4.3",
+        "node-notifier": "^8.0.1",
         "roboto-fontface": "^0.10.0",
         "slick-carousel": "^1.8.1",
         "vue": "^2.6.10"
